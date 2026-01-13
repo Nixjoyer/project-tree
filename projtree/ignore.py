@@ -35,15 +35,18 @@ def load_ignore_file(root: Path) -> set[str]:
 
     return ignore
 
-def is_ignored(path: Path, root: Path) -> bool:
-    """
-    Return True if the path should be ignored based on:
-    - DEFAULT_IGNORES
-    - .projtreeignore entries
-    """
+
+def is_ignored(
+    path: Path,
+    root: Path,
+    *,
+    extra_ignores: set[str] | None = None,
+) -> bool:
     ignores = DEFAULT_IGNORES | load_ignore_file(root)
 
-    # Check each path component relative to root
+    if extra_ignores:
+        ignores |= extra_ignores
+
     try:
         relative = path.resolve().relative_to(root.resolve())
     except ValueError:

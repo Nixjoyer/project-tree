@@ -22,6 +22,8 @@ class _DebouncedHandler(FileSystemEventHandler):
         self.output_path = output_path
         self.debounce_seconds = debounce_seconds
 
+        self._extra_ignores = {self.output_path.name}
+
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
 
@@ -37,7 +39,11 @@ class _DebouncedHandler(FileSystemEventHandler):
             return
 
         # Apply project ignore rules
-        if is_ignored(path, self.root_path):
+        if is_ignored(
+            path,
+            self.root_path,
+            extra_ignores=self._extra_ignores,
+        ):
             return
 
         self._schedule_regeneration()
@@ -70,25 +76,33 @@ def watch_and_generate(
     output_path: Path,
     *,
     debounce_seconds: float = 0.4,
+    initial_generate: bool = True,
 ) -> None:
-    # INITIAL GENERATION (critical)
-    markdown = generate_markdown_tree(root_path)
-    output_path.write_text(markdown, encoding="utf-8")
+    if initial_generate:
+        markdown = generate_markdown_tree(root_path)
+        output_path.write_text(markdown, encoding="utf-8")
 
-    handler = _DebouncedHandler(
-        root_path=root_path,
-        output_path=output_path,
-        debounce_seconds=debounce_seconds,
-    )
+    while True:
+        handler = _DebouncedHandler(
+            root_path=root_path,
+            output_path=output_path,
+            debounce_seconds=debounce_seconds,
+        )
 
-    observer = Observer()
-    observer.schedule(handler, str(root_path), recursive=True)
-    observer.start()
+        observer = Observer()
+        observer.schedule(handler, str(root_path), recursive=True)
 
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-    finally:
-        observer.join()
+        try:
+            observer.start()
+            while observer.is_alive():
+                time.sleep(1)
+        except KeyboardInterrupt:
+            observer.stop()
+            observer.join()
+            break
+        except Exception:
+            observer.stop()
+            observer.join()
+            time.sleep(1.0)  # restart backoff
+            continue
+

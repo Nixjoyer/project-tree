@@ -13,4 +13,5 @@ addopts = "-q --disable-warnings --maxfail=1"
 [project.optional-dependencies]
 dev = [
     "pytest"
+    "watchdog"
 ]

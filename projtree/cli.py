@@ -44,16 +44,27 @@ def main(argv: list[str] | None = None) -> int:
         help="Watch filesystem and regenerate on structural changes",
     )
 
+    parser.add_argument(
+        "--watch-only",
+        action="store_true",
+        help="Watch for changes without initial generation",
+    )
+
     args = parser.parse_args(argv)
 
     root_path = Path(args.path).resolve()
     output_path = Path(args.output)
 
-    if args.watch:
-        watch_and_generate(
-            root_path=Path(args.path),
-            output_path=output_path,
-        )
+    if args.watch_only and not args.watch:
+        parser.error("--watch-only requires --watch")
+
+    watch_and_generate(
+        root_path=Path(args.path),
+        output_path=output_path,
+        debounce_seconds=0.4,
+        initial_generate=not args.watch_only,
+    )
+
     else:
         markdown = generate_markdown_tree(Path(args.path))
         output_path.write_text(markdown, encoding="utf-8")
