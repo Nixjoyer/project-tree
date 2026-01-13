@@ -22,7 +22,8 @@ class _DebouncedHandler(FileSystemEventHandler):
         self.output_path = output_path
         self.debounce_seconds = debounce_seconds
 
-        self._extra_ignores = {self.output_path.name}
+        # Dynamically ignore output file
+        self._extra_ignores = {output_path.name}
 
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
@@ -30,15 +31,11 @@ class _DebouncedHandler(FileSystemEventHandler):
     def on_any_event(self, event) -> None:
         path = Path(event.src_path)
 
-        # Ignore output file to prevent loops
-        if path.resolve() == self.output_path.resolve():
-            return
-
         # Ignore non-structural events
         if event.event_type == "modified":
             return
 
-        # Apply project ignore rules
+        # Unified ignore logic
         if is_ignored(
             path,
             self.root_path,
@@ -105,4 +102,3 @@ def watch_and_generate(
             observer.join()
             time.sleep(1.0)  # restart backoff
             continue
-

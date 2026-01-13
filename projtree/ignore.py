@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 DEFAULT_IGNORES: set[str] = {
     ".git",
     ".venv",
