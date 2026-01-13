@@ -1,0 +1,16 @@
+[project]
+name = "projtree"
+version = "0.1.0"
+description = "Generate a deterministic Markdown representation of a project directory tree"
+requires-python = ">=3.10"
+
+[project.scripts]
+projtree = "projtree.cli:main"
+
+[tool.pytest.ini_options]
+addopts = "-q --disable-warnings --maxfail=1"
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]

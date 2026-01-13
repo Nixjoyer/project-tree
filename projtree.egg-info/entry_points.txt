@@ -1,0 +1,2 @@
+[console_scripts]
+projtree = projtree.cli:main

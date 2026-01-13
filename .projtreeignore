@@ -1,0 +1,8 @@
+virt-env
+.venv
+__pycache__
+.git
+projtree.egg-info
+.pytest_cache
+
+

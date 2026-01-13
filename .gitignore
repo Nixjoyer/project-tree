@@ -1,0 +1,11 @@
+__pycache__
+pytest_cache
+.venv
+venv
+env
+.env
+.mypy_cache
+node_modules
+.virt
+virt
+STRUCTURE.md
