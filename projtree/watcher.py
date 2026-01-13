@@ -28,14 +28,20 @@ class _DebouncedHandler(FileSystemEventHandler):
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
 
+
     def on_any_event(self, event) -> None:
         path = Path(event.src_path)
+
+        # Always react to .projtreeignore changes
+        if path.name == ".projtreeignore":
+            self._schedule_regeneration()
+            return
 
         # Ignore non-structural events
         if event.event_type == "modified":
             return
 
-        # Unified ignore logic
+        # Unified ignore logic (includes output file)
         if is_ignored(
             path,
             self.root_path,
