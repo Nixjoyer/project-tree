@@ -3,6 +3,9 @@ name = "projtree"
 version = "0.1.0"
 description = "Generate a deterministic Markdown representation of a project directory tree"
 requires-python = ">=3.10"
+dependencies = [
+    "watchdog"
+]
 
 [project.scripts]
 projtree = "projtree.cli:main"
@@ -11,7 +14,4 @@ projtree = "projtree.cli:main"
 addopts = "-q --disable-warnings --maxfail=1"
 
 [project.optional-dependencies]
-dev = [
-    "pytest",
-    "watchdog"
-]
+dev = ["pytest"]
