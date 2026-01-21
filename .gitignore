@@ -10,3 +10,5 @@ node_modules
 virt
 STRUCTURE.md
 projtree.egg-info
+build/*
+WARP.md
