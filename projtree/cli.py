@@ -30,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
         "-o",
         "--output",
         default=DEFAULT_OUTPUT,
-        help=f"Change output file name(default: {DEFAULT_OUTPUT})",
+        help=f"Change output file name (default: {DEFAULT_OUTPUT})",
     )
 
     parser.add_argument(
