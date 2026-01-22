@@ -6,7 +6,7 @@ from projtree.generator import generate_markdown_tree
 from projtree.ignore import DEFAULT_IGNORES, load_ignore_file
 from projtree.watcher import watch_and_generate
 
-DEFAULT_OUTPUT = "STRUCTURE.md"
+DEFAULT_OUTPUT = "structure.md"
 
 
 def parse_ignore(value: str) -> set[str]:
@@ -30,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
         "-o",
         "--output",
         default=DEFAULT_OUTPUT,
-        help=f"Output Markdown file (default: {DEFAULT_OUTPUT})",
+        help=f"Change output file name (default: {DEFAULT_OUTPUT})",
     )
 
     parser.add_argument(
