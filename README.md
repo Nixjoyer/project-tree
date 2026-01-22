@@ -102,7 +102,7 @@ positional arguments:
 
 options:
   -h, --help           show this help message and exit
-  -o, --output OUTPUT  Change output file name(default: structure.md)
+  -o, --output OUTPUT  Change output file name (default: structure.md)
   --ignore IGNORE      Comma-separated list of file or directory names to
                        ignore
   --watch              Watch filesystem and regenerate on structural changes
