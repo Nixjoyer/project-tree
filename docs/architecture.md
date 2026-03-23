@@ -46,7 +46,7 @@ The repository layout for ProjTree v1 reflects a deliberately small and explicit
 ├── .projtreeignore
 ├── LICENSE
 ├── pyproject.toml
-└── STRUCTURE.md
+└── structure.md
 ```
 
 ### Directory and File Roles
@@ -88,6 +88,7 @@ Specifically, the CLI:
 * Aggregates ignore rules from all sources
 * Dispatches execution to either one-shot generation or watch mode
 * Handles user-facing errors and exit codes
+* Exposes version information via `-v` / `--version`
 
 ---
 
@@ -96,22 +97,23 @@ Specifically, the CLI:
 The CLI interface in v1 is intentionally compact and stable. The current help output is:
 
 ```
-usage: projtree [-h] [-o OUTPUT] [--ignore IGNORE] [--watch] [--watch-only]
-                [path]
+
+usage: projtree [-h] [-v] [-o OUTPUT] [--ignore IGNORE] [--watch]
+[--watch-only] [path]
 
 Generate a deterministic Markdown project tree.
 
 positional arguments:
-  path                 Root directory of the project (default: current
-                       directory)
+path                 Root directory of the project (default: current directory)
 
 options:
-  -h, --help           show this help message and exit
-  -o, --output OUTPUT  Output Markdown file (default: STRUCTURE.md)
-  --ignore IGNORE      Comma-separated list of file or directory names to
-                       ignore
-  --watch              Watch filesystem and regenerate on structural changes
-  --watch-only         Watch for changes without initial generation
+-h, --help           show this help message and exit
+-v, --version        show installed version and exit
+-o, --output OUTPUT  output Markdown file (default: structure.md)
+--ignore IGNORE      comma-separated list of file or directory names to ignore
+--watch              watch filesystem and regenerate on structural changes
+--watch-only         watch for changes without initial generation
+
 ```
 
 ---
@@ -123,10 +125,21 @@ options:
   * Root directory to scan
   * Defaults to the current working directory
 
+* **`-v / --version`**
+
+  * Prints the installed version in the format:
+
+    ```
+    projtree: <version>
+    ```
+
+  * Exits immediately
+  * Implemented natively via `argparse`
+
 * **`-o / --output`**
 
   * Path to the generated Markdown file
-  * Defaults to `STRUCTURE.md` in the current directory
+  * Defaults to `structure.md` in the current directory
 
 * **`--ignore`**
 
@@ -153,6 +166,7 @@ options:
 * All generation logic lives in `generator.py`
 * Watch mode is optional and explicitly opt-in
 * Invalid flag combinations are rejected early
+* The CLI relies solely on the Python standard library (`argparse`) for argument handling
 
 ---
 
@@ -278,7 +292,7 @@ This ensures both performance and correctness.
 
 ### 6.6 Output File Handling
 
-The output file (default: `STRUCTURE.md`, or the value of `--output`) is treated specially:
+The output file (default: `structure.md`, or the value of `--output`) is treated specially:
 
 * It is **always ignored**, regardless of user configuration
 * This prevents:
