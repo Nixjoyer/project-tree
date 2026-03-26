@@ -6,34 +6,46 @@ ProjTree is a small, deterministic utility that generates a Markdown representat
 
 ## Features
 
-* Generates a deterministic Markdown project tree
+* Generates a **deterministic Markdown project tree**
 * Uses a **simple, explicit ignore system** based on exact name matching
 * Optional **watch mode** for continuous regeneration
-* Minimal, testable, and robust design
+* **Minimal, testable, and robust design**
 
 ---
 
 ## Installation
 
-### 1. Clone the repository
+> [!NOTE]
+> Due to Python packaging restrictions, installation should be performed inside a virtual environment or via a system-level package manager that supports global installs.
+
+### A. **UV** (Recommended)
+
+If you already have `UV` installed, simply run:
+
+```bash
+uv pip install "git+https://github.com/Nixjoyer/project-tree.git"
+```
+
+If you need a specific version, run:
+
+```bash
+uv pip install "git+https://github.com/Nixjoyer/project-tree.git@v1.1"
+# Replace the v1.1 at the end with the version you want
+```
+
+### B. Repo Clone (Mostly For Contributors)
+
+If you want to view the source code or make your own changes to it:
+
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Nixjoyer/project-tree.git
 ```
 
-### 2. Install the package
+#### 2. Install the package
 
-> **Note:** Due to Python packaging restrictions, installation should be performed inside a virtual environment or via a system-level package manager that supports global installs.
-
-#### **Option A: Editable install (recommended for development)**
-
-```bash
-pip install -e /path/to/repo/clone
-```
-
-This installs `projtree` in **editable mode**, so changes to the code are reflected immediately.
-
-#### **Option B: Standard install**
+##### **Option A: Standard install**
 
 ```bash
 pip install /path/to/repo/clone
@@ -41,9 +53,18 @@ pip install /path/to/repo/clone
 
 This installs `projtree` as a normal package.
 
-> **Note:** The `watchdog` dependency is a required runtime dependency and is installed automatically.
+##### **Option B: Editable install (recommended for development)**
 
-### 3. Optional development dependencies
+```bash
+pip install -e /path/to/repo/clone
+```
+
+This installs `projtree` in **editable mode**, so changes to its code are reflected immediately.
+
+> [!NOTE]
+> `Watchdog` is a required runtime dependency and is installed automatically.
+
+#### 3. Optional development dependencies
 
 To run the test suite with `pytest`:
 
@@ -91,9 +112,8 @@ projtree -h
 
 ```bash
 # Output
-usage: projtree [-h] [-o OUTPUT] [--ignore IGNORE] [--watch] [--watch-only]
-                [path]
-
+usage: projtree [-h] [-v] [-o OUTPUT] [--ignore IGNORE] [--watch] [--watch-only] [path]
+               
 Generate a deterministic Markdown project tree.
 
 positional arguments:
@@ -102,11 +122,18 @@ positional arguments:
 
 options:
   -h, --help           show this help message and exit
-  -o, --output OUTPUT  Change output file name (default: structure.md)
-  --ignore IGNORE      Comma-separated list of file or directory names to
+  -v, --version        show installed version and exit
+  -o, --output OUTPUT  change output file name (default: structure.md)
+  --ignore IGNORE      comma-separated list of file or directory names to
                        ignore
-  --watch              Watch filesystem and regenerate on structural changes
-  --watch-only         Watch for changes without initial generation
+  --watch              watch filesystem and regenerate on structural changes
+  --watch-only         watch for changes without initial generation
+```
+
+* `-v, --version` – Show installed version and exit
+
+```bash
+projtree -v
 ```
 
 * `-o, --output OUTPUT` – Change output name (default: `structure.md`)
@@ -117,7 +144,8 @@ projtree -o tree.md
 
 * `--ignore IGNORE` – Comma-separated list of file or directory names to ignore
 
-> **Note**: Make sure the directories aren't marked with `/`
+> [!NOTE]
+> Make sure the directories aren't marked with `/`
 
 ```bash
 # Incorrect usage
