@@ -39,7 +39,7 @@ def argparse_main(argv: list[str] | None = None) -> int:
         "-o",
         "--output",
         default=DEFAULT_OUTPUT,
-        help=f"output Markdown file (default: {DEFAULT_OUTPUT})",
+        help=f"change output file name (default: {DEFAULT_OUTPUT})",
     )
 
     parser.add_argument(

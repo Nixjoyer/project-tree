@@ -59,7 +59,7 @@ This installs `projtree` as a normal package.
 pip install -e /path/to/repo/clone
 ```
 
-This installs `projtree` in **editable mode**, so changes its code are reflected immediately.
+This installs `projtree` in **editable mode**, so changes to its code are reflected immediately.
 
 > [!NOTE]
 > `Watchdog` is a required runtime dependency and is installed automatically.

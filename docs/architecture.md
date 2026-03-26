@@ -71,7 +71,7 @@ The repository layout for ProjTree v1 reflects a deliberately small and explicit
 * `.projtreeignore`: Project-specific ignore rules consumed by ProjTree
 * `LICENSE`: Project license
 * `pyproject.toml`: Packaging metadata, dependencies, and entry points
-* `STRUCTURE.md`: Generated Markdown output (often ignored in other projects)
+* `structure.md`: Generated Markdown output (often ignored in other projects)
 
 ---
 
@@ -129,7 +129,7 @@ options:
 
   * Prints the installed version in the format:
 
-    ```
+    ```text
     projtree: <version>
     ```
 
