@@ -180,9 +180,10 @@ options:
 
 ### Key Characteristics
 
-* **Pure function**: no filesystem writes
-* Deterministic ordering
+* **Pure function**: no filesystem writes, no side effects
+* Deterministic ordering (directories before files, both sorted case-insensitively)
 * Output format is strictly defined
+* Does not handle output file ignoring (delegated to CLI/watcher layers)
 
 ### Core API
 
@@ -260,14 +261,15 @@ This guarantees deterministic output for a given input state.
 
 Ignore rules are evaluated using the following rules:
 
-* Matching is done against the **basename** of files and directories
+* Matching is done against **any part of the relative path** (top-level or nested)
 * Matching is **exact**, case-sensitive or case-insensitive depending on the host filesystem
-* No globbing, wildcards, regex, or path-based matching is supported in v1
+* No globbing, wildcards, regex, or pattern-based matching is supported in v1
 
 Examples:
 
 * `node_modules` ignores all directories named `node_modules` at any depth
-* `__pycache__` ignores all `__pycache__` directories
+* `__pycache__` ignores all `__pycache__` directories at any depth
+* `src` ignores any file or directory named `src` anywhere in the tree
 * `*.log` has **no effect** and is treated as a literal name
 
 This constraint is intentional to preserve simplicity and predictability.
@@ -294,7 +296,8 @@ This ensures both performance and correctness.
 
 The output file (default: `structure.md`, or the value of `--output`) is treated specially:
 
-* It is **always ignored**, regardless of user configuration
+* It is **always ignored by the CLI and watcher**, regardless of user configuration
+* The generator itself has no knowledge of the output file; ignore enforcement happens at orchestration layers
 * This prevents:
 
   * Self-inclusion in the generated tree
