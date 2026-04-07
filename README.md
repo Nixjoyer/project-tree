@@ -18,7 +18,7 @@ ProjTree is a small, deterministic utility that generates a Markdown representat
 > [!NOTE]
 > Due to Python packaging restrictions, installation should be performed inside a virtual environment or via a system-level package manager that supports global installs.
 
-### A. **UV** (Recommended)
+### A. **UV** (Easiest & Recommended)
 
 If you already have `UV` installed, simply run:
 
@@ -69,7 +69,7 @@ This installs `projtree` in **editable mode**, so changes to its code are reflec
 To run the test suite with `pytest`:
 
 ```bash
-pip install .[dev]
+pip install ."[dev]"
 ```
 
 This installs `pytest`, which is **only required for running tests** and is not needed for normal usage.
