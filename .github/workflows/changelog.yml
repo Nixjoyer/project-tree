@@ -19,6 +19,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -134,8 +135,11 @@ jobs:
           ')
 
           # Write to temp file to avoid shell escaping issues
+          # Format the merged-at timestamp (GitHub Actions always runs on Ubuntu/GNU coreutils)
+          MERGED_AT_FORMATTED=$(date -u -d "${PR_MERGED_AT}" '+%Y-%m-%d %H:%M:%S UTC')
+
           {
-            echo "## $(date -u -d "${PR_MERGED_AT}" '+%Y-%m-%d %H:%M:%S UTC' 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "${PR_MERGED_AT}" '+%Y-%m-%d %H:%M:%S UTC' 2>/dev/null || echo "${PR_MERGED_AT}") — PR #${PR_NUMBER}: ${PR_TITLE}"
+            echo "## ${MERGED_AT_FORMATTED} — PR #${PR_NUMBER}: ${PR_TITLE}"
             echo ""
             echo "**Author:** @${PR_AUTHOR}  "
             echo "**Merge commit:** \`${MERGE_COMMIT_SHA}\`  "
@@ -216,5 +220,5 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "docs: update CHANGELOG for PR #${PR_NUMBER} — ${PR_TITLE}"
-            git push origin HEAD:main
+            git push origin main
           fi
