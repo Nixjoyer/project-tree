@@ -69,7 +69,7 @@ This installs `projtree` in **editable mode**, so changes to its code are reflec
 To run the test suite with `pytest`:
 
 ```bash
-pip install ."[dev]"
+pip install ".[dev]"
 ```
 
 This installs `pytest`, which is **only required for running tests** and is not needed for normal usage.
