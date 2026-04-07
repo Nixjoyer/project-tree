@@ -1,0 +1,220 @@
+name: Update Changelog on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - master
+
+jobs:
+  update-changelog:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify required approvals
+        id: verify_approvals
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Fetching reviews for PR #${PR_NUMBER}..."
+          REVIEWS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
+
+          # Check approval from repository owner (Nixjoyer)
+          OWNER_APPROVED=$(echo "$REVIEWS" | jq -r '
+            [.[] | select(.state == "APPROVED") | .user.login]
+            | map(ascii_downcase)
+            | contains(["nixjoyer"])
+          ')
+
+          if [ "$OWNER_APPROVED" != "true" ]; then
+            echo "❌ PR has not been approved by Nixjoyer. Skipping changelog update."
+            echo "approved=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "✅ Approved by Nixjoyer."
+
+          # Check approval / passing review from Copilot bot
+          COPILOT_APPROVED=$(echo "$REVIEWS" | jq -r '
+            [.[] | select(.state == "APPROVED") | .user.login]
+            | map(ascii_downcase)
+            | any(. | test("copilot"))
+          ')
+
+          if [ "$COPILOT_APPROVED" != "true" ]; then
+            echo "❌ PR has not been approved by Copilot. Skipping changelog update."
+            echo "approved=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "✅ Approved by Copilot."
+
+          # Check approval / passing review from CodeRabbit bot
+          CODERABBIT_APPROVED=$(echo "$REVIEWS" | jq -r '
+            [.[] | select(.state == "APPROVED") | .user.login]
+            | map(ascii_downcase)
+            | any(. | test("coderabbit"))
+          ')
+
+          if [ "$CODERABBIT_APPROVED" != "true" ]; then
+            echo "❌ PR has not been approved by CodeRabbitAI. Skipping changelog update."
+            echo "approved=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "✅ Approved by CodeRabbitAI."
+
+          echo "approved=true" >> "$GITHUB_OUTPUT"
+
+      - name: Verify no architecture violations in PR comments
+        id: verify_guidelines
+        if: steps.verify_approvals.outputs.approved == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Checking PR review comments for architecture violations..."
+
+          # Look for unresolved blocking review comments referencing architecture violations
+          REVIEW_COMMENTS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
+
+          CHANGES_REQUESTED=$(echo "$REVIEW_COMMENTS" | jq -r '
+            [.[] | select(.state == "CHANGES_REQUESTED")] | length
+          ')
+
+          if [ "$CHANGES_REQUESTED" != "0" ]; then
+            echo "❌ There are unresolved change requests on this PR. Skipping changelog update."
+            echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "✅ No unresolved change requests found."
+          echo "guidelines_ok=true" >> "$GITHUB_OUTPUT"
+
+      - name: Collect commit information
+        id: collect_commits
+        if: |
+          steps.verify_approvals.outputs.approved == 'true' &&
+          steps.verify_guidelines.outputs.guidelines_ok == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          echo "Collecting commits for PR #${PR_NUMBER}..."
+
+          # Fetch all commits in this PR
+          COMMITS_JSON=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/commits --paginate)
+
+          # Build a markdown list of commits with sha, date, and message
+          COMMIT_ENTRIES=$(echo "$COMMITS_JSON" | jq -r '
+            .[] |
+            "- **`\(.sha[0:7])`** (\(.commit.author.date[:10])): \(.commit.message | split("\n")[0])"
+          ')
+
+          # Fetch changed files
+          FILES_JSON=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/files --paginate)
+          CHANGED_FILES=$(echo "$FILES_JSON" | jq -r '
+            .[] | "  - `\(.filename)` (\(.status))"
+          ')
+
+          # Write to temp file to avoid shell escaping issues
+          {
+            echo "## $(date -u -d "${PR_MERGED_AT}" '+%Y-%m-%d %H:%M:%S UTC' 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "${PR_MERGED_AT}" '+%Y-%m-%d %H:%M:%S UTC' 2>/dev/null || echo "${PR_MERGED_AT}") — PR #${PR_NUMBER}: ${PR_TITLE}"
+            echo ""
+            echo "**Author:** @${PR_AUTHOR}  "
+            echo "**Merge commit:** \`${MERGE_COMMIT_SHA}\`  "
+            echo "**Merged at:** ${PR_MERGED_AT}"
+            echo ""
+            echo "### Commits"
+            echo ""
+            echo "${COMMIT_ENTRIES}"
+            echo ""
+            echo "### Changed Files"
+            echo ""
+            echo "${CHANGED_FILES}"
+            echo ""
+            echo "---"
+            echo ""
+          } > /tmp/new_entry.md
+
+          echo "New changelog entry:"
+          cat /tmp/new_entry.md
+
+      - name: Append entry to CHANGELOG.md
+        if: |
+          steps.verify_approvals.outputs.approved == 'true' &&
+          steps.verify_guidelines.outputs.guidelines_ok == 'true'
+        run: |
+          CHANGELOG="docs/CHANGELOG.md"
+
+          # Ensure the docs directory and file exist
+          mkdir -p docs
+
+          if [ ! -f "$CHANGELOG" ]; then
+            {
+              echo "# Changelog"
+              echo ""
+              echo "All notable changes merged to \`main\` are recorded here."
+              echo "Entries are appended automatically when a pull request is approved and merged."
+              echo ""
+              echo "---"
+              echo ""
+            } > "$CHANGELOG"
+          fi
+
+          # Insert the new entry after the header block (after the first '---' separator)
+          HEADER_END=$(grep -n "^---$" "$CHANGELOG" | head -1 | cut -d: -f1)
+
+          if [ -n "$HEADER_END" ]; then
+            HEAD_LINES=$((HEADER_END))
+            head -n "$HEAD_LINES" "$CHANGELOG" > /tmp/changelog_head.md
+            tail -n +"$((HEAD_LINES + 1))" "$CHANGELOG" > /tmp/changelog_tail.md
+            {
+              cat /tmp/changelog_head.md
+              echo ""
+              cat /tmp/new_entry.md
+              cat /tmp/changelog_tail.md
+            } > "$CHANGELOG"
+          else
+            # No separator found – just prepend the entry after any existing content
+            cat /tmp/new_entry.md "$CHANGELOG" > /tmp/changelog_merged.md
+            mv /tmp/changelog_merged.md "$CHANGELOG"
+          fi
+
+          echo "Updated CHANGELOG.md:"
+          cat "$CHANGELOG"
+
+      - name: Commit and push changelog update
+        if: |
+          steps.verify_approvals.outputs.approved == 'true' &&
+          steps.verify_guidelines.outputs.guidelines_ok == 'true'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add docs/CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "docs: update CHANGELOG for PR #${PR_NUMBER} — ${PR_TITLE}"
+            git push origin HEAD:main
+          fi
