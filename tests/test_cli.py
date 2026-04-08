@@ -1,7 +1,6 @@
 import sys
-from io import StringIO
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 
@@ -108,7 +107,12 @@ class TestWatchOnlyFlag:
             assert call_kwargs["debounce_seconds"] == 0.4
 
     def test_watch_only_with_watch_ignores_ignored_paths(self, tmp_path: Path):
-        """Test that --watch-only respects ignore patterns."""
+        """Test that --watch-only works when --ignore patterns are provided.
+        
+        Note: Ignore patterns are currently used in one-shot mode only,
+        not forwarded to watch_and_generate. This test verifies that
+        providing --ignore with --watch-only doesn't cause errors.
+        """
         output = tmp_path / "structure.md"
         
         with patch("projtree.cli.watch_and_generate") as mock_watch:
@@ -121,6 +125,9 @@ class TestWatchOnlyFlag:
             ])
             
             mock_watch.assert_called_once()
+            # Verify watch-only behavior is still correct
+            call_kwargs = mock_watch.call_args[1]
+            assert call_kwargs["initial_generate"] is False
 
     def test_watch_only_flag_position_independent(self, tmp_path: Path):
         """Test that --watch-only works regardless of position relative to --watch."""

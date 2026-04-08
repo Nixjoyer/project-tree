@@ -74,6 +74,9 @@ def argparse_main(argv: list[str] | None = None) -> int:
     if args.ignore:
         ignore |= parse_ignore(args.ignore)
 
+    # Always exclude the output file from generation to prevent self-inclusion
+    ignore.add(output_path.name)
+
     if args.watch:
         watch_and_generate(
             root_path=root_path,

@@ -237,7 +237,7 @@ parser.add_argument(
 ```
 
 ### Documentation
-```
+```text
 projtree: <version>
 ```
 
@@ -247,7 +247,7 @@ projtree: <version>
 
 ## Validation Matrix Summary
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │        Documentation vs Test Alignment              │
 ├─────────────────────────────┬───────────────────────┤
@@ -288,7 +288,12 @@ pytest tests/test_cli.py -v -s
 
 ## Conclusion
 
-All documentation is accurate and aligned with test implementations.
+The documentation is broadly aligned with the behaviors covered by the new test suite, and the test suite provides strong verification of the documented functionality. However, through reviewing the PR comments, several documentation/behavior mismatches were identified and have been addressed:
+
+**Fixed Issues:**
+1. **Generator ignore matching**: Updated generator to check all path parts (not just basename) to match ignore.py behavior
+2. **Output file handling**: Modified CLI and watcher to consistently exclude output file from generation
+3. **Case-sensitivity documentation**: Corrected documentation to reflect that matching is always case-sensitive (not filesystem-dependent)
 
 The test suite provides comprehensive verification of:
 - CLI flag behavior (version, watch, watch-only)
@@ -297,10 +302,10 @@ The test suite provides comprehensive verification of:
 - Watcher functionality
 - Error handling and validation
 
-All tested features have corresponding documentation, and all documented behavior is covered by tests. The documentation accurately reflects the tested implementation.
+Most tested features have corresponding documentation, and the core documented behavior is covered by tests. 
 
-### Final Status: VALIDATION PASSED
+### Final Status: VALIDATION WITH CORRECTIONS APPLIED
 
-**No documentation updates needed.**
+**Documentation updates were needed and have been implemented.**
 
-The new test suite validates that the current documentation accurately describes the implemented behavior. The testing strategy follows the CONTRIBUTORS.md guidelines of full-output assertions for generators and comprehensive coverage of edge cases for CLI features.
+The new test suite validates much of the current documented behavior. The implementation has been updated to ensure consistent behavior between generator and ignore modules, and documentation has been corrected to reflect actual implementation characteristics. Testing strategy follows the CONTRIBUTORS.md guidelines of full-output assertions for generators and comprehensive coverage of edge cases for CLI features.

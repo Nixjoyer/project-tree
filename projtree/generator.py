@@ -24,7 +24,12 @@ def generate_markdown_tree(
     lines.append(".")
 
     def should_ignore(path: Path) -> bool:
-        return path.name in ignore
+        # Match against any part of the relative path to match ignore.is_ignored() behavior
+        try:
+            relative = path.relative_to(root_path)
+            return any(part in ignore for part in relative.parts)
+        except ValueError:
+            return False
 
     def sorted_children(path: Path) -> list[Path]:
         children = [p for p in path.iterdir() if not should_ignore(p)]

@@ -3,9 +3,13 @@ from pathlib import Path
 DEFAULT_IGNORES: set[str] = {
     ".git",
     ".venv",
+    "venv",
     "__pycache__",
     "node_modules",
     ".env",
+    ".pytest_cache",
+    "build",
+    "dist",
 }
 
 

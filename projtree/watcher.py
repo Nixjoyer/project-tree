@@ -8,7 +8,7 @@ from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from .generator import generate_markdown_tree
-from .ignore import is_ignored
+from .ignore import is_ignored, DEFAULT_IGNORES, load_ignore_file
 
 
 class _DebouncedHandler(FileSystemEventHandler):
@@ -64,7 +64,13 @@ class _DebouncedHandler(FileSystemEventHandler):
             self._timer.start()
 
     def _regenerate(self) -> None:
-        markdown = generate_markdown_tree(self.root_path)
+        # Build ignore set including output file
+        ignore: set[str] = set()
+        ignore |= DEFAULT_IGNORES
+        ignore |= load_ignore_file(self.root_path)
+        ignore.add(self.output_path.name)
+
+        markdown = generate_markdown_tree(self.root_path, ignore=ignore)
 
         if self.output_path.exists():
             existing = self.output_path.read_text(encoding="utf-8")
@@ -82,7 +88,13 @@ def watch_and_generate(
     initial_generate: bool = True,
 ) -> None:
     if initial_generate:
-        markdown = generate_markdown_tree(root_path)
+        # Build ignore set including output file
+        ignore: set[str] = set()
+        ignore |= DEFAULT_IGNORES
+        ignore |= load_ignore_file(root_path)
+        ignore.add(output_path.name)
+        
+        markdown = generate_markdown_tree(root_path, ignore=ignore)
         output_path.write_text(markdown, encoding="utf-8")
 
     while True:

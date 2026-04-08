@@ -66,7 +66,7 @@ return any(part in ignores for part in relative.parts)
 
 **What Changed**:
 - Added new section under "Design Principles" → "Separation of Concerns":
-  ```
+  ```text
   The output file (default structure.md) is handled at the **orchestration layer**, not in the generator:
   - CLI: Resolves output path and passes it to the generator
   - Watcher: Adds output filename to ignore set to prevent watching it
@@ -96,7 +96,7 @@ return any(part in ignores for part in relative.parts)
 
 **What Changed**:
 - Updated to acknowledge the mixed state:
-  ```
+  ```text
   Prefer modern syntax: set[str], dict[str, int], str | None (3.10+)
   Note: generator.py uses older style (Optional[Set[str]]) for historical reasons, 
   but new code should use modern style
@@ -180,6 +180,9 @@ return any(part in ignores for part in relative.parts)
 ## Conclusion
 
 All documents now accurately reflect the codebase implementation and design. The architectural separation of concerns is clearly explained, ignore system behavior is precisely documented, and contributors have clear guidance on where to implement features. The three documents form a coherent documentation suite without contradictions or gaps.
+
+**Files Updated:**
+
 1. `/docs/architecture.md` - 3 sections updated
 2. `/docs/CONTRIBUTORS.md` - 4 sections updated + 1 new section
 3. `/README.md` - 1 section updated
@@ -188,4 +191,3 @@ All documents now accurately reflect the codebase implementation and design. The
 ### Next Steps
 - Consider updating `generator.py` to use modern type hints (Optional future improvement)
 - Monitor for consistency as new features are added
-- Validate documentation against new tests in `tests/test_cli.py`

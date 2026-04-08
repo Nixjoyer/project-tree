@@ -1,7 +1,16 @@
+# Virtual Environments
 .venv
+venv
+.virt
+
+# Python Cache & Build
 __pycache__
-.git
 projtree.egg-info
 .pytest_cache
-.virt
+build
+
+# Version Control
+.git
+
+# Editor/IDE
 .vscode
