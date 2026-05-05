@@ -105,12 +105,13 @@ class TestWatchOnlyFlag:
             assert call_kwargs["initial_generate"] is False
             assert call_kwargs["debounce_seconds"] == 0.4
 
-    def test_watch_only_with_watch_ignores_ignored_paths(self, tmp_path: Path):
-        """Test that --watch-only works when --ignore patterns are provided.
+    def test_watch_only_with_watch_accepts_ignore_patterns(self, tmp_path: Path):
+        """Test that --ignore can be provided with --watch-only and --watch.
         
-        Note: Ignore patterns are currently used in one-shot mode only,
+        Ignore patterns are currently used in one-shot mode only and are
         not forwarded to watch_and_generate. This test verifies that
-        providing --ignore with --watch-only doesn't cause errors.
+        providing --ignore with --watch-only does not cause errors and
+        preserves watch-only behavior.
         """
         output = tmp_path / "structure.md"
         
