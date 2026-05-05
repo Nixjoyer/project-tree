@@ -57,7 +57,7 @@ This report validates that the documentation (architecture.md, README.md, CONTRI
 | | Error message: "--watch-only requires --watch" | VERIFIED |
 | `test_watch_only_with_watch_flag` | `--watch-only` + `--watch` passes `initial_generate=False` | VERIFIED |
 | `test_watch_only_with_watch_passes_correct_args` | All parameters passed correctly to watcher | VERIFIED |
-| `test_watch_only_with_watch_ignores_ignored_paths` | `--ignore` is forwarded to the watcher in `--watch-only` mode | VERIFIED |
+| `test_watch_only_with_watch_accepts_ignore_patterns` | `--ignore` is forwarded to the watcher in `--watch-only` mode | VERIFIED |
 | `test_watch_only_flag_position_independent` | `--watch-only` before/after `--watch` works | PASS |
 | `test_watch_only_without_watch_error_message` | Error message explicitly states requirement | VERIFIED |
 | `test_watch_only_with_output_flag` | Works with custom `-o` flag | PASS |

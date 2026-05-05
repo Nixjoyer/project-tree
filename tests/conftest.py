@@ -11,5 +11,6 @@ BUILD_LIB = REPO_ROOT / "build" / "lib"
 if str(BUILD_LIB) in sys.path:
     sys.path.remove(str(BUILD_LIB))
 
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
+repo_root_str = str(REPO_ROOT)
+sys.path = [path for path in sys.path if path != repo_root_str]
+sys.path.insert(0, repo_root_str)

@@ -170,23 +170,22 @@ class TestWatchOnlyFlag:
             assert call_kwargs["output_path"] == output
             assert call_kwargs["initial_generate"] is False
 
-    def test_watch_only_default_path(self, tmp_path: Path):
+    def test_watch_only_default_path(self, tmp_path: Path, monkeypatch):
         """Test that --watch-only uses default path when none is provided."""
         output = tmp_path / "structure.md"
         
         # Change to the tmp_path directory for this test
         with patch("projtree.cli.watch_and_generate") as mock_watch:
-            with patch("pathlib.Path.resolve") as mock_resolve:
-                mock_resolve.return_value = tmp_path
-                
-                argparse_main([
-                    "--watch",
-                    "--watch-only",
-                    "-o", str(output)
-                ])
-                
-                call_kwargs = mock_watch.call_args[1]
-                assert call_kwargs["initial_generate"] is False
+            monkeypatch.chdir(tmp_path)
+
+            argparse_main([
+                "--watch",
+                "--watch-only",
+                "-o", str(output)
+            ])
+
+            call_kwargs = mock_watch.call_args[1]
+            assert call_kwargs["initial_generate"] is False
 
 
 class TestWatchAndWatchOnlyInteraction:
