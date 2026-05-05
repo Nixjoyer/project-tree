@@ -8,7 +8,7 @@ venv
 env
 
 # Build and packaging outputs
-build/*
+build
 projtree.egg-info
 
 # JavaScript and frontend dependencies

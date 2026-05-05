@@ -17,13 +17,19 @@ class _DebouncedHandler(FileSystemEventHandler):
         root_path: Path,
         output_path: Path,
         debounce_seconds: float,
+        extra_ignores: set[str] | None = None,
     ) -> None:
         self.root_path = root_path
         self.output_path = output_path
         self.debounce_seconds = debounce_seconds
 
-        # Dynamically ignore output file
-        self._extra_ignores = {output_path.name}
+        # Only ignore the output name when it is under the watched root
+        self._extra_ignores = set(extra_ignores or set())
+        try:
+            output_path.resolve().relative_to(root_path.resolve())
+            self._extra_ignores.add(output_path.name)
+        except ValueError:
+            pass
 
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
@@ -68,7 +74,7 @@ class _DebouncedHandler(FileSystemEventHandler):
         ignore: set[str] = set()
         ignore |= DEFAULT_IGNORES
         ignore |= load_ignore_file(self.root_path)
-        ignore.add(self.output_path.name)
+        ignore |= self._extra_ignores
 
         markdown = generate_markdown_tree(self.root_path, ignore=ignore)
 
@@ -86,13 +92,21 @@ def watch_and_generate(
     *,
     debounce_seconds: float = 0.4,
     initial_generate: bool = True,
+    extra_ignores: set[str] | None = None,
 ) -> None:
+    combined_extra_ignores = set(extra_ignores or set())
+    try:
+        output_path.resolve().relative_to(root_path.resolve())
+        combined_extra_ignores.add(output_path.name)
+    except ValueError:
+        pass
+
     if initial_generate:
         # Build ignore set including output file
         ignore: set[str] = set()
         ignore |= DEFAULT_IGNORES
         ignore |= load_ignore_file(root_path)
-        ignore.add(output_path.name)
+        ignore |= combined_extra_ignores
         
         markdown = generate_markdown_tree(root_path, ignore=ignore)
         output_path.write_text(markdown, encoding="utf-8")
@@ -102,6 +116,7 @@ def watch_and_generate(
             root_path=root_path,
             output_path=output_path,
             debounce_seconds=debounce_seconds,
+            extra_ignores=combined_extra_ignores,
         )
 
         observer = Observer()

@@ -104,15 +104,10 @@ class TestWatchOnlyFlag:
             assert call_kwargs["output_path"] == output
             assert call_kwargs["initial_generate"] is False
             assert call_kwargs["debounce_seconds"] == 0.4
+            assert call_kwargs["extra_ignores"] == {"node_modules", ".git"}
 
     def test_watch_only_with_watch_accepts_ignore_patterns(self, tmp_path: Path):
-        """Test that --ignore can be provided with --watch-only and --watch.
-        
-        Ignore patterns are currently used in one-shot mode only and are
-        not forwarded to watch_and_generate. This test verifies that
-        providing --ignore with --watch-only does not cause errors and
-        preserves watch-only behavior.
-        """
+        """Test that --ignore is forwarded in watch-only mode."""
         output = tmp_path / "structure.md"
         
         with patch("projtree.cli.watch_and_generate") as mock_watch:
@@ -128,6 +123,7 @@ class TestWatchOnlyFlag:
             # Verify watch-only behavior is still correct
             call_kwargs = mock_watch.call_args[1]
             assert call_kwargs["initial_generate"] is False
+            assert call_kwargs["extra_ignores"] == {".git", "node_modules", "build"}
 
     def test_watch_only_flag_position_independent(self, tmp_path: Path):
         """Test that --watch-only works regardless of position relative to --watch."""

@@ -67,12 +67,12 @@ def argparse_main(argv: list[str] | None = None) -> int:
     root_path = Path(args.path).resolve()
     output_path = Path(args.output)
 
+    cli_ignores = parse_ignore(args.ignore) if args.ignore else set()
+
     ignore: set[str] = set()
     ignore |= DEFAULT_IGNORES
     ignore |= load_ignore_file(root_path)
-
-    if args.ignore:
-        ignore |= parse_ignore(args.ignore)
+    ignore |= cli_ignores
 
     # Always exclude the output file from generation to prevent self-inclusion
     ignore.add(output_path.name)
@@ -83,6 +83,7 @@ def argparse_main(argv: list[str] | None = None) -> int:
             output_path=output_path,
             debounce_seconds=0.4,
             initial_generate=not args.watch_only,
+            extra_ignores=cli_ignores,
         )
         return 0
 
