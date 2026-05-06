@@ -8,7 +8,7 @@
 
 ![Project Tree logo](images/logo.png)
 
-Project Tree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure. It produces stable, predictable output and optionally watches the filesystem for structural changes.
+Project Tree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure. It produces stable, predictable output and optionally watches the filesystem for structural changes. The installed command is `projtree`.
 
 ---
 
@@ -31,13 +31,13 @@ Project Tree is a small, deterministic utility that generates a Markdown represe
 If you already have `UV` installed, simply run:
 
 ```bash
-uv pip install "git+https://github.com/Nixjoyer/project-tree.git"
+uv pip install "git+https://github.com/Nuxview/Project-Tree.git"
 ```
 
 If you need a specific version, run:
 
 ```bash
-uv pip install "git+https://github.com/Nixjoyer/project-tree.git@v1.1"
+uv pip install "git+https://github.com/Nuxview/Project-Tree.git@v1.1"
 # Replace the v1.1 at the end with the version you want
 ```
 
@@ -48,7 +48,7 @@ If you want to view the source code or make your own changes to it:
 #### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Nixjoyer/project-tree.git
+git clone https://github.com/Nuxview/Project-Tree.git
 ```
 
 #### 2. Install the package
@@ -107,7 +107,7 @@ See the [usage documentation](docs/usage.md) for the full command reference, opt
 * In `--watch` mode, CLI `--ignore` values are also forwarded, so watching uses built-in defaults, `.projtreeignore`, and any CLI-supplied ignores
 * Ignore rules match **exact names anywhere in the tree** (e.g., `src` ignores any file/dir named `src` at any depth)
 * No globbing, wildcards, or pattern-based matching in v1
-* The output file itself is always ignored to prevent infinite regeneration loops
+* The output file itself is ignored when it is under the project root to prevent infinite regeneration loops
 
 Example `.projtreeignore`:
 

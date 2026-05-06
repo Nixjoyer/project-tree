@@ -1,6 +1,6 @@
-# Contributing to ProjTree
+# Contributing to Project Tree
 
-Thank you for your interest in contributing to ProjTree! This document outlines the guidelines and best practices for contributing code, documentation, and improvements to the project.
+Thank you for your interest in contributing to Project Tree! This document outlines the guidelines and best practices for contributing code, documentation, and improvements to the project.
 
 ---
 
@@ -29,7 +29,8 @@ Thank you for your interest in contributing to ProjTree! This document outlines 
 Before contributing, familiarize yourself with:
 
 - [Architecture Document](./architecture.md) – Comprehensive design overview
-- [README.md](../README.md) – Project purpose and usage
+- [README.md](../README.md) – Project purpose
+- [usage.md](./usage.md) – Usage instructions
 - [pyproject.toml](../pyproject.toml) – Project metadata and dependencies
 
 ---
@@ -39,7 +40,7 @@ Before contributing, familiarize yourself with:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Nixjoyer/project-tree.git
+git clone https://github.com/Nuxview/Project-Tree.git
 cd project-tree
 ```
 
@@ -55,7 +56,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 Using **venv**:
 
 ```bash
-python3.10 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
@@ -70,6 +71,7 @@ pip install -e ".[dev]"
 ```
 
 This installs:
+
 - `projtree` itself (editable)
 - `watchdog>=5.0.0` (core dependency)
 - `pytest` (for testing)
@@ -88,12 +90,12 @@ pytest
 
 ### Structure and Organization
 
-ProjTree follows a **separation of concerns** principle across four layers:
+Project Tree follows a **separation of concerns** principle across four layers:
 
 | Layer | Module | Responsibility |
-|-------|--------|-----------------|
+| ------- | -------- | ----------------- |
 | **CLI** | `cli.py` | Argument parsing and orchestration |
-| **Generation** | `generator.py` | Pure, deterministic tree generation |
+| **Generation** | `generator.py` | Read-only, deterministic tree generation |
 | **Ignore System** | `ignore.py` | Ignore rule resolution |
 | **Watcher** | `watcher.py` | Optional filesystem monitoring |
 
@@ -115,10 +117,10 @@ When adding features, place code in the appropriate module.
       :param root: Root directory containing .projtreeignore
       :return: Set of ignore rules
       """
-```
+   ```
 
 - **Line Length**: Keep lines reasonably sized; aim for readability
-- **Imports**: 
+- **Imports**:
   - Group imports: standard library, third-party, local
   - Avoid wildcard imports (`from x import *`)
   - Use `from pathlib import Path` for filesystem operations (not `os`)
@@ -146,7 +148,7 @@ def parse_ignore(value: str) -> set[str]:
 
 ## Testing Guidelines
 
-#### Core Principle: Full-Output Assertion
+### Core Principle: Full-Output Assertion
 
 All tests validating tree generation **must assert the complete output**, not fragments:
 
@@ -168,6 +170,7 @@ assert "main.py" in result  # Not enough; can miss formatting errors
 ```
 
 This practice ensures:
+
 - Ordering remains deterministic
 - Formatting regressions are immediately visible
 - No unintended content creeps into output
@@ -221,14 +224,15 @@ def test_single_file(tmp_path: Path):
 
 ### Test Philosophy
 
-- **Pure logic is tested exhaustively** (generator, ignore resolution)
+- **Deterministic, read-only logic is tested exhaustively** (generator, ignore resolution)
 - **Side effects are tested minimally** (watcher, filesystem I/O)
-- **No mocks for pure functions** – call them directly
+- **No mocks for deterministic functions** – call them directly
 - **Avoid flaky timing-dependent tests** – use deterministic assertions
 
 #### Note on Ignore System Testing
 
-When testing ignore behavior, remember that ignore rules match against **any part of the relative path**:
+When testing ignore behavior, remember that ignore rules match against any **path component (segment)** of the relative path (operates only on names):
+
 - Ignoring `"src"` prevents traversal of any directory or file named `src` at any depth
 - This applies uniformly across nested levels (top-level `src/` and nested paths containing `src`)
 - See [architecture.md Section 6.4](./architecture.md#64-matching-rules) for detailed matching rules
@@ -240,6 +244,7 @@ When testing ignore behavior, remember that ignore rules match against **any par
 ### Workflow
 
 1. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -250,6 +255,7 @@ When testing ignore behavior, remember that ignore rules match against **any par
    - Update tests alongside implementation
 
 3. **Test thoroughly**
+
    ```bash
    pytest -v
    ```
@@ -260,6 +266,7 @@ When testing ignore behavior, remember that ignore rules match against **any par
    - Add docstrings to new functions
 
 5. **Commit with clear messages**
+
    ```bash
    git commit -m "feat: add support for custom ignore patterns"
    git commit -m "test: add unit tests for pattern matching"
@@ -276,7 +283,7 @@ When testing ignore behavior, remember that ignore rules match against **any par
 
 #### New Features
 
-- Ensure the feature aligns with ProjTree's **minimalist philosophy** (see [Design Principles](#design-principles))
+- Ensure the feature aligns with Project Tree's **minimalist philosophy** (see [Design Principles](#design-principles))
 - Add comprehensive tests with full-output assertions
 - Update [architecture.md](./architecture.md) with design details
 - Update [README.md](../README.md) with usage examples
@@ -289,7 +296,7 @@ When testing ignore behavior, remember that ignore rules match against **any par
 
 ### Backwards Compatibility
 
-ProjTree is currently in v1.x. Maintain backwards compatibility with:
+Project Tree is currently in v1.x. Maintain backwards compatibility with:
 
 - Existing CLI interface (no breaking changes to arguments)
 - Output format (changes require semver bump)
@@ -301,7 +308,7 @@ Breaking changes require explicit discussion and semver versioning.
 
 ## Design Principles
 
-ProjTree v1 prioritizes:
+Project Tree v1 prioritizes:
 
 ### 1. **Correctness Over Features**
 
@@ -323,7 +330,7 @@ ProjTree v1 prioritizes:
 
 ### 4. **Testability**
 
-- Pure functions (no hidden state)
+- Deterministic functions (no hidden state)
 - No mocking required for core logic
 - Tests serve as live documentation
 
@@ -332,7 +339,7 @@ ProjTree v1 prioritizes:
 Adhere to the **four-layer architecture**:
 
 - **CLI** handles only argument parsing, ignore aggregation, and orchestration
-- **Generator** handles only tree generation (pure function, path traversal, ignore filtering)
+- **Generator** handles only tree generation (read-only, deterministic path traversal and ignore filtering)
 - **Ignore** handles only ignore rule resolution and matching logic
 - **Watcher** handles only filesystem monitoring and regeneration triggering
 
@@ -341,6 +348,7 @@ Code that spans layers should be refactored.
 #### Important: Output File Handling
 
 The output file (default `structure.md`) is handled at the **orchestration layer**, not in the generator:
+
 - **CLI**: Resolves output path and passes it to the generator
 - **Watcher**: Adds output filename to ignore set to prevent watching it
 - **Generator**: Remains pure and unaware of the output file
@@ -401,7 +409,7 @@ Closes #123
 ### After Merge
 
 - Celebrate!
-- Your contribution is now part of ProjTree
+- Your contribution is now part of Project Tree
 
 ---
 
@@ -449,10 +457,10 @@ python -c "from projtree.generator import generate_markdown_tree; print(generate
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as ProjTree (see [LICENSE](../LICENSE)).
+By contributing, you agree that your contributions will be licensed under the same license as Project Tree (see [LICENSE](../LICENSE)).
 
 ---
 
 ## Acknowledgments
 
-Thank you for helping make ProjTree better! This project thrives on community contributions and feedback.
+Thank you for helping make Project Tree better! This project thrives on community contributions and feedback.

@@ -11,7 +11,7 @@ projtree
 
 ---
 
-After installation, the `projtree` command is available within the environment where it was installed.
+After installation, the Project Tree command is available as `projtree` within the environment where it was installed.
 
 ```bash
 projtree [path] [options]
