@@ -113,7 +113,6 @@ def watch_and_generate(
 
     if initial_generate:
         ignore = _build_ignore_set(root_path, combined_extra_ignores)
-        
         markdown = generate_markdown_tree(root_path, ignore=ignore)
         output_path.write_text(markdown, encoding="utf-8")
 
