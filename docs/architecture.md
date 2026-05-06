@@ -180,9 +180,10 @@ options:
 
 ### Key Characteristics
 
-* **Pure function**: no filesystem writes
-* Deterministic ordering
+* **Read-only, deterministic**: no filesystem writes; results are deterministic for a given filesystem snapshot while still reading external state
+* Deterministic ordering (directories before files, both sorted case-insensitively)
 * Output format is strictly defined
+* Does not handle output file ignoring (delegated to CLI/watcher layers)
 
 ### Core API
 
@@ -229,7 +230,7 @@ Ignore rules may originate from up to three sources, listed here in **strict pre
 2. **Project ignore file** (`.projtreeignore`)
    Located at the root of the traversal.
 3. **Built-in defaults**
-   Hardcoded exclusions required for correct operation (e.g., `.git`, output file).
+  Hardcoded exclusions required for correct operation (e.g., `.git`).
 
 Lower-precedence rules are overridden by higher-precedence rules when conflicts arise.
 
@@ -242,7 +243,8 @@ Ignore resolution proceeds in the following order:
 1. Initialize the ignore set with **built-in defaults**
 2. Load and merge rules from `.projtreeignore` (if present)
 3. Load and merge rules from `--ignore` CLI arguments
-4. Freeze the ignore set for the duration of:
+4. Orchestration layers (CLI/watcher) add the output file name to avoid self-inclusion
+5. Freeze the ignore set for the duration of:
 
    * A single generation run, or
    * A single watcher session
@@ -260,14 +262,15 @@ This guarantees deterministic output for a given input state.
 
 Ignore rules are evaluated using the following rules:
 
-* Matching is done against the **basename** of files and directories
-* Matching is **exact**, case-sensitive or case-insensitive depending on the host filesystem
-* No globbing, wildcards, regex, or path-based matching is supported in v1
+* Matching is done against any **path component (segment)** of the relative path (top-level or nested; operates only on names)
+* Matching is **exact** and **case-sensitive**
+* No globbing, wildcards, regex, or pattern-based matching is supported in v1
 
 Examples:
 
 * `node_modules` ignores all directories named `node_modules` at any depth
-* `__pycache__` ignores all `__pycache__` directories
+* `__pycache__` ignores all `__pycache__` directories at any depth
+* `src` ignores any file or directory named `src` anywhere in the tree
 * `*.log` has **no effect** and is treated as a literal name
 
 This constraint is intentional to preserve simplicity and predictability.
@@ -294,7 +297,8 @@ This ensures both performance and correctness.
 
 The output file (default: `structure.md`, or the value of `--output`) is treated specially:
 
-* It is **always ignored**, regardless of user configuration
+* It is **always ignored by the CLI and watcher**, regardless of user configuration
+* The generator itself has no knowledge of the output file; ignore enforcement happens at orchestration layers
 * This prevents:
 
   * Self-inclusion in the generated tree

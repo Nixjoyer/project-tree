@@ -1,13 +1,22 @@
+# Python caches and virtual environments
 __pycache__
 .pytest_cache
+.mypy_cache
 .venv
 .env
 venv
 env
-.mypy_cache
-node_modules
+
+# Build and packaging outputs
+build
 projtree.egg-info
-build/*
-WARP.md
+
+# JavaScript and frontend dependencies
+node_modules
+
+# Editor and local tooling
 .vscode
+WARP.md
+
+# Generated project artifacts
 structure.md
