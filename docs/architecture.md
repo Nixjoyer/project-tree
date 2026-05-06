@@ -180,7 +180,7 @@ options:
 
 ### Key Characteristics
 
-* **Pure function**: no filesystem writes, no side effects
+* **Read-only, deterministic**: no filesystem writes; results are deterministic for a given filesystem snapshot while still reading external state
 * Deterministic ordering (directories before files, both sorted case-insensitively)
 * Output format is strictly defined
 * Does not handle output file ignoring (delegated to CLI/watcher layers)
@@ -230,7 +230,7 @@ Ignore rules may originate from up to three sources, listed here in **strict pre
 2. **Project ignore file** (`.projtreeignore`)
    Located at the root of the traversal.
 3. **Built-in defaults**
-   Hardcoded exclusions required for correct operation (e.g., `.git`, output file).
+  Hardcoded exclusions required for correct operation (e.g., `.git`).
 
 Lower-precedence rules are overridden by higher-precedence rules when conflicts arise.
 
@@ -243,7 +243,8 @@ Ignore resolution proceeds in the following order:
 1. Initialize the ignore set with **built-in defaults**
 2. Load and merge rules from `.projtreeignore` (if present)
 3. Load and merge rules from `--ignore` CLI arguments
-4. Freeze the ignore set for the duration of:
+4. Orchestration layers (CLI/watcher) add the output file name to avoid self-inclusion
+5. Freeze the ignore set for the duration of:
 
    * A single generation run, or
    * A single watcher session
