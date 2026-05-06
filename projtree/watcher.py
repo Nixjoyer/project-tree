@@ -81,7 +81,10 @@ class _DebouncedHandler(FileSystemEventHandler):
             self._timer.start()
 
     def _regenerate(self) -> None:
-        ignore = _build_ignore_set(self.root_path, self._extra_ignores)
+        ignore: set[str] = set()
+        ignore |= DEFAULT_IGNORES
+        ignore |= self._preloaded_ignores
+        ignore |= self._extra_ignores
 
         markdown = generate_markdown_tree(self.root_path, ignore=ignore)
 

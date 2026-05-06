@@ -45,7 +45,9 @@ def is_ignored(
     extra_ignores: set[str] | None = None,
     preloaded_ignores: set[str] | None = None,
 ) -> bool:
-    ignores = DEFAULT_IGNORES | (preloaded_ignores or load_ignore_file(root))
+    ignores = DEFAULT_IGNORES | (
+        load_ignore_file(root) if preloaded_ignores is None else preloaded_ignores
+    )
 
     if extra_ignores:
         ignores |= extra_ignores

@@ -261,7 +261,7 @@ This guarantees deterministic output for a given input state.
 
 Ignore rules are evaluated using the following rules:
 
-* Matching is done against **any part of the relative path** (top-level or nested)
+* Matching is done against any **path component (segment)** of the relative path (top-level or nested; operates only on names)
 * Matching is **exact** and **case-sensitive**
 * No globbing, wildcards, regex, or pattern-based matching is supported in v1
 

@@ -186,6 +186,7 @@ class TestWatchOnlyFlag:
 
             call_kwargs = mock_watch.call_args[1]
             assert call_kwargs["initial_generate"] is False
+            assert call_kwargs["root_path"] == tmp_path
 
 
 class TestWatchAndWatchOnlyInteraction:
