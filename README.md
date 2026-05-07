@@ -82,6 +82,33 @@ pip install ".[dev]"
 
 This installs `pytest`, which is **only required for running tests** and is not needed for normal usage.
 
+### C. Nix Flake (Development Shell)
+
+If you use Nix, you can enter the dev shell directly:
+
+```bash
+nix develop github:Nuxview/Project-Tree
+```
+
+This provides Python, `uv`, and `git` so you can install dependencies and run tests.
+
+#### Use the flake from an existing flake.nix
+
+Add Project Tree as an input and reuse its dev shell:
+
+```nix
+{
+  inputs.project-tree.url = "github:Nuxview/Project-Tree";
+
+  outputs = { self, nixpkgs, project-tree }:
+    let
+      system = "x86_64-linux";
+    in {
+      devShells.${system}.default = project-tree.devShells.${system}.default;
+    };
+}
+```
+
 ---
 
 ## Getting Started
