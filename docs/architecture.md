@@ -241,7 +241,7 @@ The ignore system operates only on names, not paths or patterns.
 
 ### 6.2 Sources of Ignore Rules
 
-Ignore rules may originate from up to three sources, listed here in strict precedence order (highest first):
+Ignore rules may originate from up to three sources, listed here in the loading order:
 
 1. CLI-provided ignores
    Passed via --ignore, as a comma-separated list of names.
@@ -250,7 +250,7 @@ Ignore rules may originate from up to three sources, listed here in strict prece
 3. Built-in defaults
    Hardcoded exclusions required for correct operation (e.g., .git).
 
-Lower-precedence rules are overridden by higher-precedence rules when conflicts arise.
+Ignore lists are unioned across sources, so the order describes how entries are loaded, not overridden.
 
 ---
 
