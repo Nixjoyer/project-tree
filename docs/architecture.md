@@ -135,7 +135,7 @@ options:
   -h, --help           show this help message and exit
   -v, --version        show installed version and exit
   -o, --output OUTPUT  output Markdown file (default: structure.md)
-  --ignore IGNORE      comma-separated list of file or directory names to ignore
+  --ignore IGNORE      Comma-separated list of file or directory names to ignore
   --watch              watch filesystem and regenerate on structural changes
   --watch-only         watch for changes without initial generation
 ```

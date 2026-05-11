@@ -41,7 +41,7 @@ Before contributing, familiarize yourself with:
 
 ```bash
 git clone https://github.com/Nuxview/Project-Tree.git
-cd project-tree
+cd Project-Tree
 ```
 
 ### 2. Create a Virtual Environment
