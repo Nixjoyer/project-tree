@@ -5,6 +5,10 @@ description = "Generate a deterministic Markdown representation of a project dir
 requires-python = ">=3.10"
 dependencies = ["watchdog>=5.0.0"]
 
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project.scripts]
 projtree = "projtree.cli:main"
 
@@ -13,3 +17,6 @@ addopts = "-q --disable-warnings --maxfail=1"
 
 [project.optional-dependencies]
 dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["projtree*"]

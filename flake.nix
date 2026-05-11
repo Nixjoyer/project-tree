@@ -13,7 +13,7 @@
       devShells = forEachSystem (pkgs: {
         default = pkgs.mkShell {
           packages = [
-            pkgs.python310
+            pkgs.python314
             pkgs.uv
             pkgs.git
           ];
@@ -23,8 +23,13 @@
           };
 
           shellHook = ''
-            echo "Project Tree dev shell loaded."
-            echo "Run: uv pip install -e '.[dev]'"
+            GREEN="\033[0;32m"
+            BLUE="\033[0;34m"
+            RESET="\033[0m"
+
+            echo -e "$BLUEProject Tree dev shell loaded.$RESET"
+            echo -e "$GREENInstalling Project Tree package (editable)...$RESET"
+            uv pip install -e ."[dev]"
           '';
         };
       });
