@@ -37,8 +37,8 @@ uv pip install "git+https://github.com/Nuxview/Project-Tree.git"
 If you need a specific version, run:
 
 ```bash
-uv pip install "git+https://github.com/Nuxview/Project-Tree.git@v1.1"
-# Replace the v1.1 at the end with the version you want
+uv pip install "git+https://github.com/Nuxview/Project-Tree.git@vX.Y.Z"
+# Replace vX.Y.Z at the end with the version you want
 ```
 
 ### B. Repo Clone (Mostly For Contributors)
