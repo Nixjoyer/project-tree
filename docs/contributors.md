@@ -13,6 +13,10 @@ Thank you for your interest in contributing to Project Tree! This document outli
 5. [Making Changes](#making-changes)
 6. [Design Principles](#design-principles)
 7. [Pull Request Process](#pull-request-process)
+8. [Common Tasks](#common-tasks)
+9. [Getting Help](#getting-help)
+10. [License](#license)
+11. [Acknowledgments](#acknowledgments)
 
 ---
 

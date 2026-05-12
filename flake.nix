@@ -29,7 +29,7 @@
 
             echo -e "$BLUEProject Tree dev shell loaded.$RESET"
             echo -e "$GREENInstalling Project Tree package (editable)...$RESET"
-            uv pip install -e ."[dev]"
+            uv pip install -e ".[dev]"
           '';
         };
       });
