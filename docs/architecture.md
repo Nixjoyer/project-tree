@@ -260,7 +260,7 @@ Ignore resolution proceeds in the following order:
 1. Initialize the ignore set with built-in defaults
 2. Load and merge rules from .projtreeignore (if present)
 3. Load and merge rules from --ignore CLI arguments
-4. Orchestration layers (CLI/watcher) add the output file name when the output path is under the project root
+4. Orchestration layers (CLI/watcher) add the output file name to the ignore set
 5. Freeze the ignore set for the duration of:
 
    - A single generation run, or
