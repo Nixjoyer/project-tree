@@ -34,8 +34,7 @@ The repository layout for Project Tree v1 reflects a deliberately small and expl
 .
 ├── docs
 │   ├── architecture.md
-│   ├── CONTRIBUTORS.md
-│   ├── TEST_VALIDATION_REPORT.md
+│   ├── contributors.md
 │   ├── refactor.md
 │   └── usage.md
 ├── images
