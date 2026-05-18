@@ -55,8 +55,7 @@ The repository layout for Project Tree v1 reflects a deliberately small and expl
 ├── .projtreeignore
 ├── LICENSE
 ├── README.md
-├── pyproject.toml
-└── structure.md
+└── pyproject.toml
 ```
 
 ### Directory and File Roles
