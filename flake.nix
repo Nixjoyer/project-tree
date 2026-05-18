@@ -27,8 +27,8 @@
             BLUE="\033[0;34m"
             RESET="\033[0m"
 
-            echo -e "$BLUEProject Tree dev shell loaded.$RESET"
-            echo -e "$GREENInstalling Project Tree package (editable)...$RESET"
+            echo -e "${BLUE}Project Tree dev shell loaded.${RESET}"
+            echo -e "${GREEN}Installing Project Tree package (editable)...${RESET}"
             uv pip install -e ".[dev]"
           '';
         };
