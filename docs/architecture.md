@@ -80,8 +80,7 @@ The repository layout for Project Tree v1 reflects a deliberately small and expl
 `docs/` - Documentation
 
 - architecture.md: Design overview and behavior
-- CONTRIBUTORS.md: Contribution and testing guidelines
-- TEST_VALIDATION_REPORT.md: Documentation-to-tests alignment report
+- contributors.md: Contribution and testing guidelines
 - refactor.md: Deferred refactor notes
 - usage.md: CLI usage reference
 
