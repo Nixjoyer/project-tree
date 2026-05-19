@@ -205,7 +205,7 @@ options:
 ### Key Characteristics
 
 - Read-only, deterministic: no filesystem writes; results are deterministic for a given filesystem snapshot while still reading external state
-- Deterministic ordering (directories before files, both sorted case-insensitively)
+- Deterministic ordering (directories before files, both sorted in case-insensitive lexicographic order)
 - Output format is strictly defined
 - Does not handle output file ignoring (delegated to CLI/watcher layers)
 
@@ -222,7 +222,7 @@ def generate_markdown_tree(
 This function:
 
 - Walks directories top-down
-- Sorts entries lexicographically
+- Sorts entries in case-insensitive lexicographic order
 - Applies ignore filtering by name
 - Emits Markdown using a fixed indentation scheme
 
@@ -406,7 +406,7 @@ These may be considered in future versions but are intentionally excluded to kee
 
 ---
 
-### 7.0 Core API
+### 6.10 Core API
 
 ```python
 def is_ignored(
