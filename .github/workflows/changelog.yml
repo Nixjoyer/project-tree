@@ -160,12 +160,12 @@ jobs:
           echo "New changelog entry:"
           cat /tmp/new_entry.md
 
-      - name: Append entry to CHANGELOG.md
+      - name: Append entry to changelog.md
         if: |
           steps.verify_approvals.outputs.approved == 'true' &&
           steps.verify_guidelines.outputs.guidelines_ok == 'true'
         run: |
-          CHANGELOG="docs/CHANGELOG.md"
+          CHANGELOG="docs/changelog.md"
 
           # Ensure the docs directory and file exist
           mkdir -p docs
@@ -201,7 +201,7 @@ jobs:
             mv /tmp/changelog_merged.md "$CHANGELOG"
           fi
 
-          echo "Updated CHANGELOG.md:"
+          echo "Updated changelog.md:"
           cat "$CHANGELOG"
 
       - name: Commit and push changelog update
@@ -215,10 +215,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add docs/CHANGELOG.md
+          git add docs/changelog.md
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "docs: update CHANGELOG for PR #${PR_NUMBER} — ${PR_TITLE}"
+            git commit -m "docs: update changelog for PR #${PR_NUMBER} — ${PR_TITLE}"
             git push origin main
           fi
