@@ -3,9 +3,13 @@ from pathlib import Path
 DEFAULT_IGNORES: set[str] = {
     ".git",
     ".venv",
+    "venv",
     "__pycache__",
     "node_modules",
     ".env",
+    ".pytest_cache",
+    "build",
+    "dist",
 }
 
 
@@ -39,8 +43,11 @@ def is_ignored(
     root: Path,
     *,
     extra_ignores: set[str] | None = None,
+    preloaded_ignores: set[str] | None = None,
 ) -> bool:
-    ignores = DEFAULT_IGNORES | load_ignore_file(root)
+    ignores = DEFAULT_IGNORES | (
+        load_ignore_file(root) if preloaded_ignores is None else preloaded_ignores
+    )
 
     if extra_ignores:
         ignores |= extra_ignores
