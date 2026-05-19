@@ -26,7 +26,9 @@
             RESET="\033[0m"
 
             printf "%b\n" "''${BLUE}Project Tree dev shell loaded.''${RESET}"
-            printf "%b\n" "''${GREEN}Install editable package (optional): uv pip install -e \".[dev]\"''${RESET}"
+            printf "%b\n" "''${GREEN}Installing editable package...''${RESET}"
+            uv pip install -e ".[dev]"
+            printf "%b\n" "''${GREEN}Editable package installed. Happy coding!😁''${RESET}"
           '';
         };
       });
