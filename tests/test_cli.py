@@ -7,6 +7,42 @@ from projtree import __version__
 from projtree.cli import argparse_main
 
 
+class TestOutputIgnoreBehavior:
+    """Tests for output file ignore behavior."""
+
+    def test_output_name_ignored_when_output_is_under_root(self, tmp_path: Path):
+        output = tmp_path / "structure.md"
+        captured_ignore = None
+
+        def fake_generate_markdown_tree(_root, ignore):
+            nonlocal captured_ignore
+            captured_ignore = ignore
+            return "# Project Structure\n"
+
+        with patch("projtree.cli.generate_markdown_tree", side_effect=fake_generate_markdown_tree):
+            result = argparse_main([str(tmp_path), "-o", str(output)])
+
+        assert result == 0
+        assert captured_ignore is not None
+        assert output.name in captured_ignore
+
+    def test_output_name_not_ignored_when_output_is_outside_root(self, tmp_path: Path):
+        output = tmp_path.parent / "outside.md"
+        captured_ignore = None
+
+        def fake_generate_markdown_tree(_root, ignore):
+            nonlocal captured_ignore
+            captured_ignore = ignore
+            return "# Project Structure\n"
+
+        with patch("projtree.cli.generate_markdown_tree", side_effect=fake_generate_markdown_tree):
+            result = argparse_main([str(tmp_path), "-o", str(output)])
+
+        assert result == 0
+        assert captured_ignore is not None
+        assert output.name not in captured_ignore
+
+
 class TestVersionFlag:
     """Tests for the --version flag."""
 

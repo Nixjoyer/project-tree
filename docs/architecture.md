@@ -94,7 +94,6 @@ Top-level files
 - LICENSE: Project license
 - README.md: Project overview and quickstart
 - pyproject.toml: Packaging metadata, dependencies, and entry points
-- structure.md: Generated Markdown output (often ignored in other projects)
 
 ---
 
@@ -121,20 +120,24 @@ The CLI interface in v1 is intentionally compact and stable. The current help ou
 
 ```text
 usage: projtree [-h] [-v] [-o OUTPUT] [--ignore IGNORE] [--watch]
-[--watch-only] [path]
+                [--watch-only]
+                [path]
 
 Generate a deterministic Markdown project tree.
 
 positional arguments:
-  path                 Root directory of the project (default: current directory)
+  path                  root directory of the project (default: current
+                        directory)
 
 options:
-  -h, --help           show this help message and exit
-  -v, --version        show installed version and exit
-  -o, --output OUTPUT  output Markdown file (default: structure.md)
-  --ignore IGNORE      Comma-separated list of file or directory names to ignore
-  --watch              watch filesystem and regenerate on structural changes
-  --watch-only         watch for changes without initial generation
+  -h, --help            show this help message and exit
+  -v, --version         show installed version and exit
+  -o OUTPUT, --output OUTPUT
+                        change output file name (default: structure.md)
+  --ignore IGNORE       comma-separated list of file or directory names to
+                        ignore
+  --watch               watch filesystem and regenerate on structural changes
+  --watch-only          watch for changes without initial generation
 ```
 
 ---
@@ -428,17 +431,16 @@ Its responsibilities are:
 
 ### Definition: Structural Change (v1)
 
-In Project Tree v1, a structural change is defined as any filesystem event that may alter the directory tree, including:
+In Project Tree v1, a structural change is defined as create/delete/move events that may alter the directory tree, including:
 
 - Creation of files or directories
 - Deletion of files or directories
-- Renaming or moving files or directories
-- Directory-level metadata changes that may reflect added or removed entries
+- Renaming or moving files or directories (including directory moves)
 
 Importantly:
 
-- The watcher does not attempt to distinguish between file-level and directory-level events
-- Directory modification events are treated as structural, even if the underlying file event is not observed
+- The watcher ignores all `modified` events in v1
+- Structural changes are detected via create/delete/move events instead
 
 This definition is intentionally broad to ensure correctness across platforms and filesystems.
 

@@ -18,9 +18,7 @@
             pkgs.git
           ];
 
-          env = {
-            PIP_DISABLE_PIP_VERSION_CHECK = "1";
-          };
+          PIP_DISABLE_PIP_VERSION_CHECK = "1";
 
           shellHook = ''
             GREEN="\033[0;32m"
@@ -28,8 +26,7 @@
             RESET="\033[0m"
 
             echo -e "${BLUE}Project Tree dev shell loaded.${RESET}"
-            echo -e "${GREEN}Installing Project Tree package (editable)...${RESET}"
-            uv pip install -e ".[dev]"
+            echo -e "${GREEN}Install editable package (optional): uv pip install -e \".[dev]\"${RESET}"
           '';
         };
       });
