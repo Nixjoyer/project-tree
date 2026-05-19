@@ -74,8 +74,12 @@ def argparse_main(argv: list[str] | None = None) -> int:
     ignore |= load_ignore_file(root_path)
     ignore |= cli_ignores
 
-    # Always exclude the output file from generation to prevent self-inclusion
-    ignore.add(output_path.name)
+    # Exclude output file only when writing under the project root.
+    try:
+        output_path.resolve().relative_to(root_path)
+        ignore.add(output_path.name)
+    except ValueError:
+        pass
 
     if args.watch:
         watch_and_generate(

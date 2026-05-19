@@ -1,9 +1,13 @@
 [project]
 name = "projtree"
-version = "1.1.1"
+version = "1.2"
 description = "Generate a deterministic Markdown representation of a project directory tree"
 requires-python = ">=3.10"
 dependencies = ["watchdog>=5.0.0"]
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project.scripts]
 projtree = "projtree.cli:main"
@@ -13,3 +17,6 @@ addopts = "-q --disable-warnings --maxfail=1"
 
 [project.optional-dependencies]
 dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["projtree*"]

@@ -1,6 +1,14 @@
-# ProjTree
+# Project Tree
 
-ProjTree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure. It produces stable, predictable output and optionally watches the filesystem for structural changes.
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Nuxview/Project-Tree?utm_source=oss&utm_medium=github&utm_campaign=Nuxview%2FProject-Tree&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+![Last commit](https://img.shields.io/github/last-commit/Nuxview/Project-Tree)
+![Repo size](https://img.shields.io/github/repo-size/Nuxview/Project-Tree)
+![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-0B5FFF?logo=opensourceinitiative&logoColor=white)
+
+![Project Tree logo](images/logo.png)
+
+Project Tree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure. It produces stable, predictable output and optionally watches the filesystem for structural changes. The installed command is `projtree`.
 
 ---
 
@@ -23,14 +31,14 @@ ProjTree is a small, deterministic utility that generates a Markdown representat
 If you already have `UV` installed, simply run:
 
 ```bash
-uv pip install "git+https://github.com/Nixjoyer/project-tree.git"
+uv pip install "git+https://github.com/Nuxview/Project-Tree.git"
 ```
 
 If you need a specific version, run:
 
 ```bash
-uv pip install "git+https://github.com/Nixjoyer/project-tree.git@v1.1"
-# Replace the v1.1 at the end with the version you want
+uv pip install "git+https://github.com/Nuxview/Project-Tree.git@vX.Y.Z"
+# Replace vX.Y.Z at the end with the version you want
 ```
 
 ### B. Repo Clone (Mostly For Contributors)
@@ -40,7 +48,7 @@ If you want to view the source code or make your own changes to it:
 #### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Nixjoyer/project-tree.git
+git clone https://github.com/Nuxview/Project-Tree.git
 ```
 
 #### 2. Install the package
@@ -74,136 +82,47 @@ pip install ".[dev]"
 
 This installs `pytest`, which is **only required for running tests** and is not needed for normal usage.
 
----
+### C. Nix Flake (Development Shell)
 
-## Usage
-
-After installation, the `projtree` command is available **within the environment where it was installed**.
+If you use Nix, you can enter the dev shell directly:
 
 ```bash
-projtree [path] [options]
+nix develop github:Nuxview/Project-Tree
 ```
 
-### Positional Arguments
+This provides Python, `uv`, and `git` so you can install dependencies and run tests.
 
-* `path` – Root directory of the project (default: current directory)
+#### Use the flake from an existing flake.nix
 
-#### Example Usage
+Add Project Tree as an input and reuse its dev shell:
 
-Generate a project tree in the current directory:
+```nix
+{
+  inputs.project-tree.url = "github:Nuxview/Project-Tree";
+
+  outputs = { self, nixpkgs, project-tree }:
+    let
+      system = "x86_64-linux";
+    in {
+      devShells.${system}.default = project-tree.devShells.${system}.default;
+    };
+}
+```
+
+---
+
+## Getting Started
+
+1. Install the package using the steps above.
+2. Run `projtree` from your project root to generate `structure.md`.
 
 ```bash
 projtree
 ```
 
-Generate a project tree for a specific directory:
+## Usage
 
-```bash
-projtree /path/to/project
-```
-
-### Options
-
-* `-h, --help` – Show help and exit
-
-```bash
-projtree -h
-```
-
-```bash
-# Output
-usage: projtree [-h] [-v] [-o OUTPUT] [--ignore IGNORE] [--watch] [--watch-only] [path]
-               
-Generate a deterministic Markdown project tree.
-
-positional arguments:
-  path                 Root directory of the project (default: current
-                       directory)
-
-options:
-  -h, --help           show this help message and exit
-  -v, --version        show installed version and exit
-  -o, --output OUTPUT  change output file name (default: structure.md)
-  --ignore IGNORE      comma-separated list of file or directory names to
-                       ignore
-  --watch              watch filesystem and regenerate on structural changes
-  --watch-only         watch for changes without initial generation
-```
-
-* `-v, --version` – Show installed version and exit
-
-```bash
-projtree -v
-```
-
-* `-o, --output OUTPUT` – Change output name (default: `structure.md`)
-
-```bash
-projtree -o tree.md
-```
-
-* `--ignore IGNORE` – Comma-separated list of file or directory names to ignore
-
-> [!NOTE]
-> Make sure the directories aren't marked with `/`
-
-```bash
-# Incorrect usage
-projtree --ignore node_modules/, __pycache__/
-
-# Correct Usage
-projtree --ignore node_modules,__pycache__
-```
-
-> **Alternatively:** Add your files and directories to the custom `.projtreeignore` file
-
-```text
-.venv
-__pycache__
-.git
-projtree.egg-info
-.pytest_cache
-```
-
-* `--watch` – Watch filesystem and regenerate on structural changes
-
-```bash
-# Runs until cancelled
-projtree --watch
-```
-
-* `--watch-only` – Watch without initial generation (requires `--watch`)
-
-```bash
-projtree --watch --watch-only
-```
-
----
-
-### Example Output
-
-```text
-# Project Structure
-
-_Generated by projtree_
-
-.
-├── projtree
-│   ├── __init__.py
-│   ├── cli.py
-│   ├── generator.py
-│   ├── ignore.py
-│   └── watcher.py
-├── tests
-│   ├── test_basic_tree.py
-│   ├── test_watcher_basic.py
-│   └── utils.py
-├── .gitignore
-├── .projtreeignore
-├── LICENSE
-├── pyproject.toml
-└── structure.md
-```
+See the [usage documentation](docs/usage.md) for the full command reference, options, and example output.
 
 ---
 
@@ -215,7 +134,7 @@ _Generated by projtree_
 * In `--watch` mode, CLI `--ignore` values are also forwarded, so watching uses built-in defaults, `.projtreeignore`, and any CLI-supplied ignores
 * Ignore rules match **exact names anywhere in the tree** (e.g., `src` ignores any file/dir named `src` at any depth)
 * No globbing, wildcards, or pattern-based matching in v1
-* The output file itself is always ignored to prevent infinite regeneration loops
+* If the output file is under the project root, its file name is also added to the ignore set to prevent regeneration loops
 
 Example `.projtreeignore`:
 
