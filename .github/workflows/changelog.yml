@@ -34,47 +34,20 @@ jobs:
           echo "Fetching reviews for PR #${PR_NUMBER}..."
           REVIEWS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
 
-          # Check approval from repository owner (Nixjoyer)
+          # Check approval from repository owner (Nuxview)
+          # Add additional trusted reviewers by expanding the list below.
           OWNER_APPROVED=$(echo "$REVIEWS" | jq -r '
             [.[] | select(.state == "APPROVED") | .user.login]
             | map(ascii_downcase)
-            | contains(["nixjoyer"])
+            | contains(["nuxview"])
           ')
 
           if [ "$OWNER_APPROVED" != "true" ]; then
-            echo "❌ PR has not been approved by Nixjoyer. Skipping changelog update."
+            echo "❌ PR has not been approved by Nuxview. Skipping changelog update."
             echo "approved=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          echo "✅ Approved by Nixjoyer."
-
-          # Check approval / passing review from Copilot bot
-          COPILOT_APPROVED=$(echo "$REVIEWS" | jq -r '
-            [.[] | select(.state == "APPROVED") | .user.login]
-            | map(ascii_downcase)
-            | any(. | test("copilot"))
-          ')
-
-          if [ "$COPILOT_APPROVED" != "true" ]; then
-            echo "❌ PR has not been approved by Copilot. Skipping changelog update."
-            echo "approved=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "✅ Approved by Copilot."
-
-          # Check approval / passing review from CodeRabbit bot
-          CODERABBIT_APPROVED=$(echo "$REVIEWS" | jq -r '
-            [.[] | select(.state == "APPROVED") | .user.login]
-            | map(ascii_downcase)
-            | any(. | test("coderabbit"))
-          ')
-
-          if [ "$CODERABBIT_APPROVED" != "true" ]; then
-            echo "❌ PR has not been approved by CodeRabbitAI. Skipping changelog update."
-            echo "approved=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "✅ Approved by CodeRabbitAI."
+          echo "✅ Approved by Nuxview."
 
           echo "approved=true" >> "$GITHUB_OUTPUT"
 
@@ -156,9 +129,9 @@ jobs:
           MERGED_AT_FORMATTED=$(date -u -d "${PR_MERGED_AT}" '+%Y-%m-%d %H:%M:%S UTC')
 
           {
-            echo "## ${MERGED_AT_FORMATTED} — PR #${PR_NUMBER}: ${PR_TITLE}"
+            printf '## %s — PR #%s: %s\n' "${MERGED_AT_FORMATTED}" "${PR_NUMBER}" "${PR_TITLE}"
             echo ""
-            echo "**Author:** @${PR_AUTHOR}  "
+            printf '**Author:** @%s  \n' "${PR_AUTHOR}"
             echo "**Merge commit:** \`${MERGE_COMMIT_SHA}\`  "
             echo "**Merged at:** ${PR_MERGED_AT}"
             echo ""
@@ -228,6 +201,7 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -237,5 +211,5 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "docs: update changelog for PR #${PR_NUMBER} — ${PR_TITLE}"
-            git push origin main
+            git push origin "${TARGET_BRANCH}"
           fi
