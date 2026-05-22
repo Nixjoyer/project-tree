@@ -1,7 +1,8 @@
 name: Update Changelog on Merge
 
 on:
-  pull_request:
+  # Use pull_request_target to run with write permissions for fork PRs while checking out the base branch only.
+  pull_request_target:
     types: [closed]
     branches:
       - main
@@ -77,7 +78,7 @@ jobs:
 
           echo "approved=true" >> "$GITHUB_OUTPUT"
 
-      - name: Verify no architecture violations in PR comments
+      - name: Verify effective review decision
         id: verify_guidelines
         if: steps.verify_approvals.outputs.approved == 'true'
         env:
@@ -85,22 +86,38 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          echo "Checking PR review comments for architecture violations..."
+          echo "Checking effective review decision for blocking requests..."
 
-          # Look for unresolved blocking review comments referencing architecture violations
-          REVIEW_COMMENTS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
+          REVIEW_DECISION=$(gh pr view "${PR_NUMBER}" --repo "${REPO}" --json reviewDecision -q '.reviewDecision' 2>/dev/null || true)
 
-          CHANGES_REQUESTED=$(echo "$REVIEW_COMMENTS" | jq -r '
-            [.[] | select(.state == "CHANGES_REQUESTED")] | length
-          ')
+          if [ -z "$REVIEW_DECISION" ]; then
+            echo "⚠️  Unable to read reviewDecision; falling back to latest review state per reviewer."
+            REVIEWS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
+            REVIEW_SUMMARY=$(echo "$REVIEWS" | jq -r '
+              sort_by(.submitted_at) |
+              group_by(.user.login) |
+              map(last) |
+              map({login: .user.login, state: .state})
+            ')
 
-          if [ "$CHANGES_REQUESTED" != "0" ]; then
-            echo "❌ There are unresolved change requests on this PR. Skipping changelog update."
-            echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
-            exit 0
+            REQUESTING_CHANGES=$(echo "$REVIEW_SUMMARY" | jq -r '
+              map(select(.state == "CHANGES_REQUESTED") | .login) | join(", ")
+            ')
+
+            if [ -n "$REQUESTING_CHANGES" ]; then
+              echo "❌ Effective review state includes CHANGES_REQUESTED from: ${REQUESTING_CHANGES}. Skipping changelog update."
+              echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          else
+            if [ "$REVIEW_DECISION" = "CHANGES_REQUESTED" ]; then
+              echo "❌ Review decision is CHANGES_REQUESTED. Skipping changelog update."
+              echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           fi
 
-          echo "✅ No unresolved change requests found."
+          echo "✅ Review decision allows merge."
           echo "guidelines_ok=true" >> "$GITHUB_OUTPUT"
 
       - name: Collect commit information
