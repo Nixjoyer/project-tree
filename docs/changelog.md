@@ -6,9 +6,9 @@ meets the workflow's review requirements and is successfully merged to `main`.
 
 Current automation is based on review state:
 
-1. The pull request is approved by **Nixjoyer**.
-2. The changes are approved by automated reviewers **Copilot** and **CodeRabbitAI**.
-3. The pull request is successfully merged to `main`.
+1. The pull request is approved by **Nuxview**.
+2. No reviewer has an outstanding `CHANGES_REQUESTED` review (a later approval from the same reviewer supersedes it).
+3. The pull request is successfully merged to `main` or `master`.
 
 ---
 
