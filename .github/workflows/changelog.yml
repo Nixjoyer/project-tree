@@ -34,16 +34,19 @@ jobs:
           echo "Fetching reviews for PR #${PR_NUMBER}..."
           REVIEWS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
 
-          # Check approval from repository owner (Nuxview)
+          # Check latest review state from repository owner (Nuxview)
           # Add additional trusted reviewers by expanding the list below.
-          OWNER_APPROVED=$(echo "$REVIEWS" | jq -r '
-            [.[] | select(.state == "APPROVED") | .user.login]
-            | map(ascii_downcase)
-            | contains(["nuxview"])
+          OWNER_STATE=$(echo "$REVIEWS" | jq -r '
+            sort_by(.user.login, .submitted_at) |
+            group_by(.user.login) |
+            map(last) |
+            map(select(.user.login | ascii_downcase | IN("nuxview"))) |
+            map(.state) |
+            first
           ')
 
-          if [ "$OWNER_APPROVED" != "true" ]; then
-            echo "❌ PR has not been approved by Nuxview. Skipping changelog update."
+          if [ "$OWNER_STATE" != "APPROVED" ]; then
+            echo "❌ PR does not have a current approval from Nuxview. Skipping changelog update."
             echo "approved=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -66,8 +69,14 @@ jobs:
           if [ -z "$REVIEW_DECISION" ]; then
             echo "⚠️  Unable to read reviewDecision; falling back to latest review state per reviewer."
             REVIEWS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
+            REVIEWS_TYPE=$(echo "$REVIEWS" | jq -r 'type' 2>/dev/null || echo invalid)
+            if [ -z "$REVIEWS" ] || [ "$REVIEWS_TYPE" != "array" ] || [ "$(echo "$REVIEWS" | jq -r 'length')" = "0" ]; then
+              echo "❌ Unable to fetch review history; failing closed."
+              echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             REVIEW_SUMMARY=$(echo "$REVIEWS" | jq -r '
-              sort_by(.submitted_at) |
+              sort_by(.user.login, .submitted_at) |
               group_by(.user.login) |
               map(last) |
               map({login: .user.login, state: .state})
@@ -211,5 +220,19 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "docs: update changelog for PR #${PR_NUMBER} — ${PR_TITLE}"
-            git push origin "${TARGET_BRANCH}"
+            for attempt in 1 2 3; do
+              if git push origin "${TARGET_BRANCH}"; then
+                echo "Push succeeded."
+                exit 0
+              fi
+              echo "Push failed (attempt ${attempt}). Fetching latest and retrying..."
+              git fetch origin "${TARGET_BRANCH}"
+              if ! git rebase "origin/${TARGET_BRANCH}"; then
+                echo "Rebase failed; aborting retry loop."
+                git rebase --abort
+                exit 1
+              fi
+            done
+            echo "Push failed after 3 attempts."
+            exit 1
           fi
