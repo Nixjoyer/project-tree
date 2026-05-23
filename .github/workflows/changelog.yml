@@ -150,7 +150,7 @@ jobs:
           echo "New changelog entry:"
           cat /tmp/new_entry.md
 
-      - name: Append entry to changelog.md
+      - name: Prepend entry to changelog.md
         if: |
           steps.verify_approvals.outputs.approved == 'true' &&
           steps.verify_guidelines.outputs.guidelines_ok == 'true'
@@ -164,8 +164,8 @@ jobs:
             {
               echo "# Changelog"
               echo ""
-              echo "All notable changes merged to \`main\` are recorded here."
-              echo "Entries are appended automatically when a pull request is approved and merged."
+              echo "All notable changes merged to \`main\` or \`master\` are recorded here."
+              echo "Entries are prepended automatically when a pull request is approved and merged."
               echo ""
               echo "---"
               echo ""
@@ -186,7 +186,7 @@ jobs:
               cat /tmp/changelog_tail.md
             } > "$CHANGELOG"
           else
-            # No separator found – just prepend the entry after any existing content
+            # No separator found – prepend the new entry before any existing content
             cat /tmp/new_entry.md "$CHANGELOG" > /tmp/changelog_merged.md
             mv /tmp/changelog_merged.md "$CHANGELOG"
           fi
