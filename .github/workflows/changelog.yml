@@ -129,9 +129,9 @@ jobs:
           MERGED_AT_FORMATTED=$(date -u -d "${PR_MERGED_AT}" '+%Y-%m-%d %H:%M:%S UTC')
 
           {
-            printf '## %s — PR #%s: %s\n' "${MERGED_AT_FORMATTED}" "${PR_NUMBER}" "${PR_TITLE}"
+            printf '## %s — PR #%s: %s\n' "${MERGED_AT_FORMATTED}" "${PR_NUMBER}" "${PR_TITLE//%/%%}"
             echo ""
-            printf '**Author:** @%s  \n' "${PR_AUTHOR}"
+            echo "**Author:** @${PR_AUTHOR}  "
             echo "**Merge commit:** \`${MERGE_COMMIT_SHA}\`  "
             echo "**Merged at:** ${PR_MERGED_AT}"
             echo ""
