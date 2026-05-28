@@ -78,14 +78,16 @@ projtree -o tree.md
 - `--ignore IGNORE` - Comma-separated list of file or directory names to ignore
 
 > [!NOTE]
-> Make sure the directories aren't marked with `/`
+> Ignore entries are exact names only. Path-like values such as `src/target` are treated as a literal name and will not match nested paths.
 
 ```bash
 # Incorrect usage
-projtree --ignore node_modules/, __pycache__/
+projtree --ignore node_modules/,__pycache__/
+projtree --ignore src/target
 
 # Correct Usage
 projtree --ignore node_modules,__pycache__
+projtree --ignore target
 ```
 
 > **Alternatively:** Add your files and directories to the custom `.projtreeignore` file
@@ -96,6 +98,7 @@ __pycache__
 .git
 projtree.egg-info
 .pytest_cache
+target
 ```
 
 - `--watch` - Watch filesystem and regenerate on structural changes

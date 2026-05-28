@@ -133,6 +133,7 @@ See the [usage documentation](docs/usage.md) for the full command reference, opt
 * For normal runs, CLI `--ignore` arguments are merged with project and built-in ignores
 * In `--watch` mode, CLI `--ignore` values are also forwarded, so watching uses built-in defaults, `.projtreeignore`, and any CLI-supplied ignores
 * Ignore rules match **exact names anywhere in the tree** (e.g., `src` ignores any file/dir named `src` at any depth)
+* Ignore entries are treated as exact names, not paths. For example, `target` works, but `src/target` does not match nested paths
 * No globbing, wildcards, or pattern-based matching in v1
 * If the output file is under the project root, its file name is also added to the ignore set to prevent regeneration loops
 
