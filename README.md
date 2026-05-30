@@ -82,19 +82,29 @@ pip install ".[dev]"
 
 This installs `pytest`, which is **only required for running tests** and is not needed for normal usage.
 
-### C. Nix Flake (Development Shell)
+### C. Nix Flake
 
-If you use Nix, you can enter the dev shell directly:
+If you use Nix:
 
-```bash
-nix develop github:Nuxview/Project-Tree
-```
+- **Project Tree development (editable install):**
 
-This provides Python, `uv`, and `git` so you can install dependencies and run tests.
+  ```bash
+  nix develop github:Nuxview/Project-Tree
+  ```
+
+  This provides Python, `uv`, and `git`, and installs `projtree` in editable mode.
+
+- **CLI usage in other repositories (non-editable):**
+
+  ```bash
+  nix develop github:Nuxview/Project-Tree#cli
+  ```
+
+  This provides the `projtree` CLI as a regular package without editable install.
 
 #### Use the flake from an existing flake.nix
 
-Add Project Tree as an input and reuse its dev shell:
+Add Project Tree as an input and reuse either output:
 
 ```nix
 {
@@ -104,7 +114,11 @@ Add Project Tree as an input and reuse its dev shell:
     let
       system = "x86_64-linux";
     in {
-      devShells.${system}.default = project-tree.devShells.${system}.default;
+      # Editable Project Tree development shell
+      devShells.${system}.project-tree-dev = project-tree.devShells.${system}.default;
+
+      # Regular CLI usage shell (no editable install)
+      devShells.${system}.project-tree-cli = project-tree.devShells.${system}.cli;
     };
 }
 ```

@@ -8,9 +8,31 @@
   outputs = { self, nixpkgs }:
     let
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forEachSystem = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
+      forEachSystem = f: nixpkgs.lib.genAttrs systems (system: f system nixpkgs.legacyPackages.${system});
     in {
-      devShells = forEachSystem (pkgs: {
+      packages = forEachSystem (_: pkgs:
+        let
+          pythonPkgs = pkgs.python314Packages;
+        in {
+          default = pythonPkgs.buildPythonApplication {
+            pname = "projtree";
+            version = "1.2";
+            pyproject = true;
+            src = self;
+            nativeBuildInputs = with pythonPkgs; [ setuptools wheel ];
+            propagatedBuildInputs = with pythonPkgs; [ watchdog ];
+            pythonImportsCheck = [ "projtree" ];
+          };
+        });
+
+      apps = forEachSystem (system: _: {
+        default = {
+          type = "app";
+          program = "${self.packages.${system}.default}/bin/projtree";
+        };
+      });
+
+      devShells = forEachSystem (system: pkgs: {
         default = pkgs.mkShell {
           packages = [
             pkgs.python314
@@ -30,6 +52,10 @@
             uv pip install -e ".[dev]"
             printf "%b\n" "''${GREEN}Editable package installed. Happy coding!😁''${RESET}"
           '';
+        };
+
+        cli = pkgs.mkShell {
+          packages = [ self.packages.${system}.default ];
         };
       });
     };
