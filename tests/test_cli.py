@@ -255,3 +255,30 @@ class TestWatchAndWatchOnlyInteraction:
             ])
             
             assert result == 0
+
+
+class TestIgnorePathLikeEntries:
+    """Tests documenting exact-name ignore semantics."""
+
+    def test_ignore_option_path_like_value_does_not_ignore_nested_entry(self, tmp_path: Path):
+        (tmp_path / "src").mkdir()
+        (tmp_path / "src" / "target").write_text("", encoding="utf-8")
+
+        output = tmp_path / "structure.md"
+        result = argparse_main([str(tmp_path), "-o", str(output), "--ignore", "src/target"])
+
+        assert result == 0
+        contents = output.read_text(encoding="utf-8")
+        assert "target" in contents
+
+    def test_projtreeignore_path_like_value_does_not_ignore_nested_entry(self, tmp_path: Path):
+        (tmp_path / "src").mkdir()
+        (tmp_path / "src" / "target").write_text("", encoding="utf-8")
+        (tmp_path / ".projtreeignore").write_text("src/target\n", encoding="utf-8")
+
+        output = tmp_path / "structure.md"
+        result = argparse_main([str(tmp_path), "-o", str(output)])
+
+        assert result == 0
+        contents = output.read_text(encoding="utf-8")
+        assert "target" in contents
