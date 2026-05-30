@@ -9,6 +9,8 @@
     let
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
       forEachSystem = f: nixpkgs.lib.genAttrs systems (system: f system nixpkgs.legacyPackages.${system});
+      pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
+      projtreeVersion = pyproject.project.version;
     in {
       packages = forEachSystem (_: pkgs:
         let
@@ -16,7 +18,7 @@
         in {
           default = pythonPkgs.buildPythonApplication {
             pname = "projtree";
-            version = "1.2";
+            version = projtreeVersion;
             pyproject = true;
             src = self;
             nativeBuildInputs = with pythonPkgs; [ setuptools wheel ];
@@ -25,7 +27,7 @@
           };
         });
 
-      apps = forEachSystem (system: _: {
+      apps = forEachSystem (system: _pkgs: {
         default = {
           type = "app";
           program = "${self.packages.${system}.default}/bin/projtree";
