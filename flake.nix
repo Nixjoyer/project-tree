@@ -14,9 +14,8 @@
     in {
       packages = forEachSystem (_: pkgs:
         let
-          pythonPkgs = pkgs.python314Packages;
-        in {
-          default = pythonPkgs.buildPythonApplication {
+          pythonPkgs = pkgs.python3Packages;
+          projtree = pythonPkgs.buildPythonApplication {
             pname = "projtree";
             version = projtreeVersion;
             pyproject = true;
@@ -25,6 +24,9 @@
             propagatedBuildInputs = with pythonPkgs; [ watchdog ];
             pythonImportsCheck = [ "projtree" ];
           };
+        in {
+          default = projtree;
+          cli = projtree;
         });
 
       apps = forEachSystem (system: _pkgs: {
@@ -37,7 +39,7 @@
       devShells = forEachSystem (system: pkgs: {
         default = pkgs.mkShell {
           packages = [
-            pkgs.python314
+            pkgs.python3
             pkgs.uv
             pkgs.git
           ];
