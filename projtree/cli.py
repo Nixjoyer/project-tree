@@ -1,3 +1,5 @@
+"""Command-line entry points and orchestration for project tree generation."""
+
 import argparse
 import sys
 from pathlib import Path
@@ -11,10 +13,12 @@ DEFAULT_OUTPUT = "structure.md"
 
 
 def parse_ignore(value: str) -> set[str]:
+    """Parse a comma-separated ignore list into normalized exact-name entries."""
     return {item.strip() for item in value.split(",") if item.strip()}
 
 
 def argparse_main(argv: list[str] | None = None) -> int:
+    """Run the CLI workflow and return a process-style exit code."""
     parser = argparse.ArgumentParser(
         prog="projtree",
         description="Generate a deterministic Markdown project tree.",
@@ -102,6 +106,7 @@ def argparse_main(argv: list[str] | None = None) -> int:
 
 
 def main() -> None:
+    """CLI process entrypoint."""
     raise SystemExit(argparse_main())
 
 

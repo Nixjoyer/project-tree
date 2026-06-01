@@ -1,3 +1,5 @@
+"""Ignore loading and matching utilities shared by CLI and watcher flows."""
+
 from pathlib import Path
 
 DEFAULT_IGNORES: set[str] = {
@@ -45,6 +47,7 @@ def is_ignored(
     extra_ignores: set[str] | None = None,
     preloaded_ignores: set[str] | None = None,
 ) -> bool:
+    """Check whether path should be omitted using exact-name segment matching."""
     ignores = DEFAULT_IGNORES | (
         load_ignore_file(root) if preloaded_ignores is None else preloaded_ignores
     )

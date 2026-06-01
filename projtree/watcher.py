@@ -1,3 +1,5 @@
+"""Filesystem watch mode with debounced regeneration of the Markdown tree."""
+
 from __future__ import annotations
 
 import logging
@@ -18,6 +20,7 @@ def _build_ignore_set(
     root_path: Path,
     extra_ignores: set[str] | None = None,
 ) -> set[str]:
+    """Build the effective ignore set from defaults, file entries, and CLI extras."""
     ignore: set[str] = set()
     ignore |= DEFAULT_IGNORES
     ignore |= load_ignore_file(root_path)
@@ -26,6 +29,8 @@ def _build_ignore_set(
 
 
 class _DebouncedHandler(FileSystemEventHandler):
+    """Handle filesystem events and debounce regeneration bursts."""
+
     def __init__(
         self,
         root_path: Path,
@@ -33,6 +38,7 @@ class _DebouncedHandler(FileSystemEventHandler):
         debounce_seconds: float,
         extra_ignores: set[str] | None = None,
     ) -> None:
+        """Initialize event handling state for a single observer lifecycle."""
         self.root_path = root_path
         self.output_path = output_path
         self.debounce_seconds = debounce_seconds
@@ -45,6 +51,7 @@ class _DebouncedHandler(FileSystemEventHandler):
 
 
     def on_any_event(self, event) -> None:
+        """Handle observer events and trigger regeneration when structure changed."""
         path = Path(event.src_path)
 
         # Always react to .projtreeignore changes
@@ -69,6 +76,7 @@ class _DebouncedHandler(FileSystemEventHandler):
         self._schedule_regeneration()
 
     def _schedule_regeneration(self) -> None:
+        """Restart the debounce timer so rapid events collapse into one update."""
         with self._lock:
             if self._timer:
                 self._timer.cancel()
@@ -81,6 +89,7 @@ class _DebouncedHandler(FileSystemEventHandler):
             self._timer.start()
 
     def _regenerate(self) -> None:
+        """Generate Markdown and write only when the output content changed."""
         ignore: set[str] = set()
         ignore |= DEFAULT_IGNORES
         ignore |= self._preloaded_ignores
@@ -104,6 +113,7 @@ def watch_and_generate(
     initial_generate: bool = True,
     extra_ignores: set[str] | None = None,
 ) -> None:
+    """Run watch mode with optional initial generation and restart-on-failure loop."""
     combined_extra_ignores = set(extra_ignores or set())
     try:
         output_path.resolve().relative_to(root_path.resolve())
