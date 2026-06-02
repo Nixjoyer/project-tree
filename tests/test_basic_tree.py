@@ -1,9 +1,12 @@
+"""Tests for deterministic markdown tree generation."""
+
 from pathlib import Path
 
 from projtree.generator import generate_markdown_tree
 
 
 def test_single_file(tmp_path: Path):
+    """Generate a tree for a single-file project."""
     (tmp_path / "README.md").write_text("", encoding="utf-8")
 
     result = generate_markdown_tree(tmp_path)
@@ -21,6 +24,7 @@ def test_single_file(tmp_path: Path):
 
 
 def test_nested_directories(tmp_path: Path):
+    """Generate a tree with nested directories and files."""
     (tmp_path / "src").mkdir()
     (tmp_path / "src" / "main.py").write_text("", encoding="utf-8")
     (tmp_path / "src" / "utils.py").write_text("", encoding="utf-8")
@@ -42,6 +46,7 @@ def test_nested_directories(tmp_path: Path):
 
 
 def test_directories_before_files(tmp_path: Path):
+    """Ensure directories are listed before files."""
     (tmp_path / "b_file.txt").write_text("", encoding="utf-8")
     (tmp_path / "a_dir").mkdir()
     (tmp_path / "a_dir" / "file.txt").write_text("", encoding="utf-8")
@@ -63,6 +68,7 @@ def test_directories_before_files(tmp_path: Path):
 
 
 def test_ignored_paths_are_omitted(tmp_path: Path):
+    """Omit ignored paths from the output tree."""
     (tmp_path / ".git").mkdir()
     (tmp_path / ".git" / "config").write_text("", encoding="utf-8")
     (tmp_path / "src").mkdir()
@@ -84,6 +90,7 @@ def test_ignored_paths_are_omitted(tmp_path: Path):
 
 
 def test_output_is_deterministic(tmp_path: Path):
+    """Ensure repeated generation yields identical output."""
     (tmp_path / "src").mkdir()
     (tmp_path / "src" / "b.py").write_text("", encoding="utf-8")
     (tmp_path / "src" / "a.py").write_text("", encoding="utf-8")
@@ -95,6 +102,7 @@ def test_output_is_deterministic(tmp_path: Path):
 
 
 def test_unicode_characters_are_preserved(tmp_path: Path):
+    """Ensure unicode names are preserved in output."""
     (tmp_path / "café").mkdir()
     (tmp_path / "café" / "naïve.py").write_text("", encoding="utf-8")
 

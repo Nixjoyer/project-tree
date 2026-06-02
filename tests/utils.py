@@ -1,3 +1,5 @@
+"""Helpers for test setup and file creation."""
+
 from pathlib import Path
 
 

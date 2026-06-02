@@ -1,3 +1,5 @@
+"""Tests for watcher-based regeneration."""
+
 import threading
 import time
 from pathlib import Path
@@ -6,6 +8,7 @@ from projtree.watcher import watch_and_generate
 
 
 def test_watcher_regenerates_on_new_file(tmp_path: Path):
+    """Regenerate output when a new file appears."""
     output = tmp_path / "STRUCTURE.md"
 
     watcher_thread = threading.Thread(

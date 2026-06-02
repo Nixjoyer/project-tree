@@ -1,3 +1,5 @@
+"""CLI test coverage for argument parsing and orchestration."""
+
 from pathlib import Path
 from unittest.mock import patch
 
@@ -11,6 +13,7 @@ class TestOutputIgnoreBehavior:
     """Tests for output file ignore behavior."""
 
     def test_output_name_ignored_when_output_is_under_root(self, tmp_path: Path):
+        """Add output name to ignores when output stays under root."""
         output = tmp_path / "structure.md"
         captured_ignore = None
 
@@ -27,6 +30,7 @@ class TestOutputIgnoreBehavior:
         assert output.name in captured_ignore
 
     def test_output_name_not_ignored_when_output_is_outside_root(self, tmp_path: Path):
+        """Avoid ignoring output name when output is outside root."""
         output = tmp_path.parent / "outside.md"
         captured_ignore = None
 
@@ -261,6 +265,7 @@ class TestIgnorePathLikeEntries:
     """Tests documenting exact-name ignore semantics."""
 
     def test_ignore_option_path_like_value_does_not_ignore_nested_entry(self, tmp_path: Path):
+        """Keep nested entries when ignore argument is path-like."""
         (tmp_path / "src").mkdir()
         (tmp_path / "src" / "target").write_text("", encoding="utf-8")
 
@@ -272,6 +277,7 @@ class TestIgnorePathLikeEntries:
         assert "target" in contents
 
     def test_projtreeignore_path_like_value_does_not_ignore_nested_entry(self, tmp_path: Path):
+        """Keep nested entries when .projtreeignore entry is path-like."""
         (tmp_path / "src").mkdir()
         (tmp_path / "src" / "target").write_text("", encoding="utf-8")
         (tmp_path / ".projtreeignore").write_text("src/target\n", encoding="utf-8")
