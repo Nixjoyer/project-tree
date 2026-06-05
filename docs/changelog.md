@@ -12,6 +12,35 @@ Current automation is based on review state:
 
 ---
 
+## 2026-06-05 19:10:39 UTC — PR #21: Document test suite internals and enforce docstrings
+
+**Author:** @Copilot  
+**Merge commit:** `68cf7bc06897b5cae551eacbcd2777ea79b5b0d6`  
+**Merged at:** 2026-06-05T19:10:39Z
+
+### Commits
+
+- **`7e69086`** (2026-06-01): Initial plan
+- **`44beab4`** (2026-06-01): docs: add internal docstrings across core modules
+- **`3fb8772`** (2026-06-02): docs: add test suite docstrings
+
+### Changed Files
+
+  - `projtree/__init__.py` (modified)
+  - `projtree/cli.py` (modified)
+  - `projtree/generator.py` (modified)
+  - `projtree/ignore.py` (modified)
+  - `projtree/watcher.py` (modified)
+  - `tests/conftest.py` (modified)
+  - `tests/test_basic_tree.py` (modified)
+  - `tests/test_cli.py` (modified)
+  - `tests/test_internal_docs.py` (added)
+  - `tests/test_watcher_basic.py` (modified)
+  - `tests/utils.py` (modified)
+
+---
+
+
 ## 2026-05-23 20:40:59 UTC — PR #12: feat: add changelog GitHub Action and initial changelog.md
 
 **Author:** @Copilot  
