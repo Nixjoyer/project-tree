@@ -1,3 +1,5 @@
+"""Pytest configuration for in-repo imports."""
+
 from __future__ import annotations
 
 import sys

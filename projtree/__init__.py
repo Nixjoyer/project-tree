@@ -1,3 +1,5 @@
+"""Project Tree package metadata."""
+
 from importlib.metadata import version, PackageNotFoundError
 
 try:

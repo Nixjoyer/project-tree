@@ -1,3 +1,5 @@
+"""Deterministic Markdown generation for directory trees."""
+
 from pathlib import Path
 from typing import Optional, Set
 
@@ -24,6 +26,7 @@ def generate_markdown_tree(
     lines.append(".")
 
     def should_ignore(path: Path) -> bool:
+        """Return whether any relative path segment matches an ignore name."""
         # Match against any part of the relative path to match ignore.is_ignored() behavior
         try:
             relative = path.relative_to(root_path)
@@ -32,6 +35,7 @@ def generate_markdown_tree(
             return False
 
     def sorted_children(path: Path) -> list[Path]:
+        """Sort children with directories first and case-insensitive ordering."""
         children = [p for p in path.iterdir() if not should_ignore(p)]
         dirs = sorted(
             (p for p in children if p.is_dir()),
@@ -44,6 +48,7 @@ def generate_markdown_tree(
         return dirs + files
 
     def walk(current_path: Path, prefix: str) -> None:
+        """Append rendered tree lines for current_path and all descendants."""
         children = sorted_children(current_path)
         count = len(children)
 
