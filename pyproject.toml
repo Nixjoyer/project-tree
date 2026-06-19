@@ -1,7 +1,10 @@
 [project]
 name = "projtree"
 version = "1.2"
+readme = "README.md"
 description = "Generate a deterministic Markdown representation of a project directory tree"
+license = {file = "LICENSE"}
+authors = [{name = "Nuxview"}]
 requires-python = ">=3.10"
 dependencies = ["watchdog>=5.0.0"]
 
