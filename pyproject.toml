@@ -3,10 +3,23 @@ name = "projtree"
 version = "1.2"
 readme = "README.md"
 description = "Generate a deterministic Markdown representation of a project directory tree"
-license = {file = "LICENSE"}
-authors = [{name = "Nuxview"}]
+keywords = ["project", "tree", "markdown", "directory", "cli"]
 requires-python = ">=3.10"
 dependencies = ["watchdog>=5.0.0"]
+
+authors = [
+    {name = "Nuxview"},
+]
+
+license = "MIT"
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+]
 
 [project.optional-dependencies]
 dev = ["pytest"]
@@ -23,3 +36,9 @@ addopts = "-q --disable-warnings --maxfail=1"
 
 [tool.setuptools.packages.find]
 include = ["projtree*"]
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
