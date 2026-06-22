@@ -18,4 +18,7 @@ WARP.md
 
 # Generated project artifacts
 *.md
-!README.md
+!/README.md
+
+# Project artifacts
+.projtreeignore
