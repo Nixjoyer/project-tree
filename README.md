@@ -20,18 +20,23 @@ Project Tree is a small, deterministic utility that generates a Markdown represe
 
 ## Installation
 
-If you already have `UV` installed, simply run:
+Simply run:
 
 ```bash
-uv pip install "git+https://github.com/Nuxview/Project-Tree.git"
+pip install project-tree
+```
+
+Or if you already have `UV` installed, simply run:
+
+```bash
+uv pip install project-tree
 ```
 
 ---
 
 ## Getting Started
 
-1. Install the package using the steps above.
-2. Run `projtree` from your project root to generate `structure.md`.
+Run `projtree` from your project root to generate `structure.md`.
 
 ```bash
 projtree
@@ -39,7 +44,13 @@ projtree
 
 ## Usage
 
-See the [usage documentation](docs/usage.md) for the full command reference, options, and example output.
+Run `projtree` with `--help` to see the full command reference, options, and example output.
+
+```bash
+projtree --help
+```
+
+Or see the [usage documentation](docs/usage.md) for the full command reference, options, and example output.
 
 ---
 

@@ -10,7 +10,7 @@ env
 # Build and packaging outputs
 build
 dist
-projtree.egg-info
+*.egg-info
 
 # Editor and local tooling
 .vscode
@@ -18,7 +18,12 @@ WARP.md
 
 # Generated project artifacts
 *.md
+
+# Do not ignore these files
 !/README.md
+!/CONTRIBUTING.md
+!/CHANGELOG.md
+!/docs/*
 
 # Project artifacts
 .projtreeignore

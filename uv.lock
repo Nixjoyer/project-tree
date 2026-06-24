@@ -51,8 +51,8 @@ wheels = [
 ]
 
 [[package]]
-name = "projtree"
-version = "1.2rc1"
+name = "project-tree"
+version = "1.3rc1"
 source = { editable = "." }
 dependencies = [
     { name = "watchdog" },
