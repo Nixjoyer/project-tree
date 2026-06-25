@@ -1,6 +1,14 @@
-name: Run linter and tests
+name: Run tests
+
+permissions:
+  contents: read
 
 on:
+  workflow_run:
+    workflows: ["Run linter"]
+    types:
+      - completed
+
   push:
     branches:
       - main
@@ -10,30 +18,18 @@ on:
       - main
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - run: pip install ruff
-
-      - run: ruff check .
-
   tests:
-    needs: lint
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: SetUp python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
         with:
           python-version: "3.13"
 
