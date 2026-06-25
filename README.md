@@ -23,13 +23,13 @@ Project Tree is a small, deterministic utility that generates a Markdown represe
 Simply run:
 
 ```bash
-pip install project-tree
+pipx install project-tree
 ```
 
 Or if you already have `UV` installed, simply run:
 
 ```bash
-uv pip install project-tree
+uv tool install project-tree
 ```
 
 ---
