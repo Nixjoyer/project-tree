@@ -1,8 +1,8 @@
 """Project Tree package metadata."""
 
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = version("projtree")
+    __version__ = version("project-tree")
 except PackageNotFoundError:
     __version__ = "0.0.0-dev"

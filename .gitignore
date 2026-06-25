@@ -9,14 +9,21 @@ env
 
 # Build and packaging outputs
 build
-projtree.egg-info
-
-# JavaScript and frontend dependencies
-node_modules
+dist
+*.egg-info
 
 # Editor and local tooling
 .vscode
 WARP.md
 
 # Generated project artifacts
-structure.md
+*.md
+
+# Do not ignore these files
+!/README.md
+!/CONTRIBUTING.md
+!/CHANGELOG.md
+!/docs/*
+
+# Project artifacts
+.projtreeignore

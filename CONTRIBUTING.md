@@ -6,17 +6,57 @@ Thank you for your interest in contributing to Project Tree! This document outli
 
 ## Table of Contents
 
-1. [Getting Started](#getting-started)
-2. [Development Setup](#development-setup)
-3. [Code Standards](#code-standards)
-4. [Testing Guidelines](#testing-guidelines)
-5. [Making Changes](#making-changes)
-6. [Design Principles](#design-principles)
-7. [Pull Request Process](#pull-request-process)
-8. [Common Tasks](#common-tasks)
-9. [Getting Help](#getting-help)
-10. [License](#license)
-11. [Acknowledgments](#acknowledgments)
+<!--toc:start-->
+- [Contributing to Project Tree](#contributing-to-project-tree)
+  - [Table of Contents](#table-of-contents)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Key Reading](#key-reading)
+  - [Development Setup](#development-setup)
+    - [1. Clone the Repository](#1-clone-the-repository)
+    - [2. Create a Virtual Environment](#2-create-a-virtual-environment)
+    - [3. Install Dependencies](#3-install-dependencies)
+    - [4. Verify Installation](#4-verify-installation)
+  - [Code Standards](#code-standards)
+    - [Structure and Organization](#structure-and-organization)
+    - [Python Style](#python-style)
+    - [Naming Conventions](#naming-conventions)
+    - [Example Function Structure](#example-function-structure)
+  - [Testing Guidelines](#testing-guidelines)
+    - [Core Principle: Full-Output Assertion](#core-principle-full-output-assertion)
+    - [Running Tests](#running-tests)
+    - [Test Organization](#test-organization)
+    - [Writing Tests](#writing-tests)
+    - [Test Philosophy](#test-philosophy)
+      - [Note on Ignore System Testing](#note-on-ignore-system-testing)
+  - [Making Changes](#making-changes)
+    - [Workflow](#workflow)
+    - [Types of Changes](#types-of-changes)
+      - [Bug Fixes](#bug-fixes)
+      - [New Features](#new-features)
+      - [Documentation](#documentation)
+    - [Backwards Compatibility](#backwards-compatibility)
+  - [Design Principles](#design-principles)
+    - [1. **Correctness Over Features**](#1-correctness-over-features)
+    - [2. **Simplicity Over Abstraction**](#2-simplicity-over-abstraction)
+    - [3. **Explicit Behavior Over Cleverness**](#3-explicit-behavior-over-cleverness)
+    - [4. **Testability**](#4-testability)
+    - [5. **Separation of Concerns**](#5-separation-of-concerns)
+      - [Important: Output File Handling](#important-output-file-handling)
+    - [6. **Platform Independence**](#6-platform-independence)
+  - [Pull Request Process](#pull-request-process)
+    - [Before Submitting](#before-submitting)
+    - [PR Description](#pr-description)
+    - [Review Process](#review-process)
+    - [After Merge](#after-merge)
+  - [Common Tasks](#common-tasks)
+    - [Adding a New CLI Flag](#adding-a-new-cli-flag)
+    - [Adding a Test](#adding-a-test)
+    - [Debugging](#debugging)
+  - [Getting Help](#getting-help)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
+<!--toc:end-->
 
 ---
 
@@ -32,10 +72,10 @@ Thank you for your interest in contributing to Project Tree! This document outli
 
 Before contributing, familiarize yourself with:
 
-- [Architecture Document](./architecture.md) – Comprehensive design overview
-- [README.md](../README.md) – Project purpose
-- [usage.md](./usage.md) – Usage instructions
-- [pyproject.toml](../pyproject.toml) – Project metadata and dependencies
+- [Architecture Document](docs/architecture.md) – Comprehensive design overview
+- [README.md](README.md) – Project purpose
+- [usage.md](docs/usage.md) – Usage instructions
+- [pyproject.toml](pyproject.toml) – Project metadata and dependencies
 
 ---
 
@@ -239,7 +279,7 @@ When testing ignore behavior, remember that ignore rules match against any **pat
 
 - Ignoring `"src"` prevents traversal of any directory or file named `src` at any depth
 - This applies uniformly across nested levels (top-level `src/` and nested paths containing `src`)
-- See [architecture.md Section 6.4](./architecture.md#64-matching-rules) for detailed matching rules
+- See [architecture.md Section 6.4](docs/architecture.md#64-matching-rules) for detailed matching rules
 
 ---
 
@@ -265,8 +305,8 @@ When testing ignore behavior, remember that ignore rules match against any **pat
    ```
 
 4. **Update documentation**
-   - If behavior changes, update [architecture.md](./architecture.md)
-   - If CLI changes, update help text and [README.md](../README.md)
+   - If behavior changes, update [architecture.md](docs/architecture.md)
+   - If CLI changes, update help text and [README.md](README.md)
    - Add docstrings to new functions
 
 5. **Commit with clear messages**
@@ -283,14 +323,14 @@ When testing ignore behavior, remember that ignore rules match against any **pat
 - Include a test that reproduces the bug
 - Fix the issue
 - Ensure the test now passes
-- Update [architecture.md](./architecture.md) if behavior changes
+- Update [architecture.md](docs/architecture.md) if behavior changes
 
 #### New Features
 
 - Ensure the feature aligns with Project Tree's **minimalist philosophy** (see [Design Principles](#design-principles))
 - Add comprehensive tests with full-output assertions
-- Update [architecture.md](./architecture.md) with design details
-- Update [README.md](../README.md) with usage examples
+- Update [architecture.md](docs/architecture.md) with design details
+- Update [README.md](README.md) with usage examples
 
 #### Documentation
 
@@ -317,7 +357,7 @@ Project Tree v1 prioritizes:
 ### 1. **Correctness Over Features**
 
 - Stable, predictable output takes precedence
-- Deferred features are listed in [architecture.md](./architecture.md#10-deferred-features)
+- Deferred features are listed in [architecture.md](docs/architecture.md#10-deferred-features)
 - When unsure, omit rather than add complexity
 
 ### 2. **Simplicity Over Abstraction**
@@ -374,7 +414,7 @@ This ensures the generator stays testable and deterministic.
 - [ ] Tests pass: `pytest -v`
 - [ ] Code follows style guidelines (type hints, docstrings)
 - [ ] Commits are atomic and descriptive
-- [ ] Documentation is updated ([architecture.md](./architecture.md), [README.md](../README.md))
+- [ ] Documentation is updated ([architecture.md](docs/architecture.md), [README.md](README.md))
 - [ ] No unrelated changes included
 
 ### PR Description
@@ -424,8 +464,8 @@ Closes #123
 1. Add argument to `argparse` in `cli.py`
 2. Pass parameter to generation/watcher functions
 3. Add tests in `test_cli.py`
-4. Update [README.md](../README.md) with usage example
-5. Update [architecture.md](./architecture.md) CLI section
+4. Update [README.md](README.md) with usage example
+5. Update [architecture.md](docs/architecture.md) CLI section
 
 ### Adding a Test
 
@@ -461,7 +501,7 @@ python -c "from projtree.generator import generate_markdown_tree; print(generate
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as Project Tree (see [LICENSE](../LICENSE)).
+By contributing, you agree that your contributions will be licensed under the same license as Project Tree (see [LICENSE](LICENSE)).
 
 ---
 

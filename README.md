@@ -1,14 +1,11 @@
 # Project Tree
 
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Nuxview/Project-Tree?utm_source=oss&utm_medium=github&utm_campaign=Nuxview%2FProject-Tree&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 ![Last commit](https://img.shields.io/github/last-commit/Nuxview/Project-Tree)
 ![Repo size](https://img.shields.io/github/repo-size/Nuxview/Project-Tree)
 ![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-0B5FFF?logo=opensourceinitiative&logoColor=white)
 
-![Project Tree logo](images/logo.png)
-
-Project Tree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure. It produces stable, predictable output and optionally watches the filesystem for structural changes. The installed command is `projtree`.
+Project Tree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure.
 
 ---
 
@@ -17,104 +14,29 @@ Project Tree is a small, deterministic utility that generates a Markdown represe
 * Generates a **deterministic Markdown project tree**
 * Uses a **simple, explicit ignore system** based on exact name matching
 * Optional **watch mode** for continuous regeneration
-* **Minimal, testable, and robust design**
+* **Minimal, testable design**
 
 ---
 
 ## Installation
 
-> [!NOTE]
-> Due to Python packaging restrictions, installation should be performed inside a virtual environment or via a system-level package manager that supports global installs.
-
-### A. **UV** (Easiest & Recommended)
-
-If you already have `UV` installed, simply run:
+Simply run:
 
 ```bash
-uv pip install "git+https://github.com/Nuxview/Project-Tree.git"
+pip install project-tree
 ```
 
-If you need a specific version, run:
+Or if you already have `UV` installed, simply run:
 
 ```bash
-uv pip install "git+https://github.com/Nuxview/Project-Tree.git@vX.Y.Z"
-# Replace vX.Y.Z at the end with the version you want
-```
-
-### B. Repo Clone (Mostly For Contributors)
-
-If you want to view the source code or make your own changes to it:
-
-#### 1. Clone the repository
-
-```bash
-git clone https://github.com/Nuxview/Project-Tree.git
-```
-
-#### 2. Install the package
-
-##### **Option A: Standard install**
-
-```bash
-pip install /path/to/repo/clone
-```
-
-This installs `projtree` as a normal package.
-
-##### **Option B: Editable install (recommended for development)**
-
-```bash
-pip install -e /path/to/repo/clone
-```
-
-This installs `projtree` in **editable mode**, so changes to its code are reflected immediately.
-
-> [!NOTE]
-> `Watchdog` is a required runtime dependency and is installed automatically.
-
-#### 3. Optional development dependencies
-
-To run the test suite with `pytest`:
-
-```bash
-pip install ".[dev]"
-```
-
-This installs `pytest`, which is **only required for running tests** and is not needed for normal usage.
-
-### C. Nix Flake (Development Shell)
-
-If you use Nix, you can enter the dev shell directly:
-
-```bash
-nix develop github:Nuxview/Project-Tree
-```
-
-This provides Python, `uv`, and `git` so you can install dependencies and run tests.
-
-#### Use the flake from an existing flake.nix
-
-Add Project Tree as an input and reuse its dev shell:
-
-```nix
-{
-  inputs.project-tree.url = "github:Nuxview/Project-Tree";
-
-  outputs = { self, nixpkgs, project-tree }:
-    let
-      system = "x86_64-linux";
-    in {
-      devShells.${system}.default = project-tree.devShells.${system}.default;
-    };
-}
+uv pip install project-tree
 ```
 
 ---
 
 ## Getting Started
 
-1. Install the package using the steps above.
-2. Run `projtree` from your project root to generate `structure.md`.
+Run `projtree` from your project root to generate `structure.md`.
 
 ```bash
 projtree
@@ -122,7 +44,13 @@ projtree
 
 ## Usage
 
-See the [usage documentation](docs/usage.md) for the full command reference, options, and example output.
+Run `projtree` with `--help` to see the full command reference, options, and example output.
+
+```bash
+projtree --help
+```
+
+Or see the [usage documentation](docs/usage.md) for the full command reference, options, and example output.
 
 ---
 
