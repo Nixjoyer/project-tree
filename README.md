@@ -5,7 +5,7 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-0B5FFF?logo=opensourceinitiative&logoColor=white)
 
-Project Tree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure. It produces stable, predictable output and optionally watches the filesystem for structural changes. The installed command is `projtree`.
+Project Tree is a small, deterministic utility that generates a Markdown representation of a project’s directory structure.
 
 ---
 
@@ -14,7 +14,7 @@ Project Tree is a small, deterministic utility that generates a Markdown represe
 * Generates a **deterministic Markdown project tree**
 * Uses a **simple, explicit ignore system** based on exact name matching
 * Optional **watch mode** for continuous regeneration
-* **Minimal, testable, and robust design**
+* **Minimal, testable design**
 
 ---
 
