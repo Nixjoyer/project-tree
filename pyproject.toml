@@ -21,6 +21,10 @@ classifiers = [
     "Intended Audience :: Developers",
 ]
 
+[project.urls]
+Homepage = "https://github.com/Nuxview/Project-Tree"
+Issues = "https://github.com/Nuxview/Project-Tree/issues"
+
 [project.optional-dependencies]
 dev = ["pytest"]
 
