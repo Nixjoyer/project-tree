@@ -6,9 +6,7 @@ meets the workflow's review requirements and is successfully merged to `main` or
 
 Current automation is based on review state:
 
-1. The pull request is approved by **Nuxview**.
-2. No reviewer has an outstanding `CHANGES_REQUESTED` review (a later approval from the same reviewer supersedes it).
-3. The pull request is successfully merged to `main` or `master`.
+- The pull request is successfully merged to `main` or `master`.
 
 ---
 
@@ -69,5 +67,3 @@ Current automation is based on review state:
   - `docs/changelog.md` (added)
 
 ---
-
-
