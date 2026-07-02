@@ -5,6 +5,8 @@ permissions:
 
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - main
     paths:
@@ -42,6 +44,7 @@ jobs:
 
   publish-pypi:
     needs: detect-version
+    if: github.event.pull_request.merged == true && needs.detect-version.outputs.version_changed == 'true'
     runs-on: ubuntu-latest
     environment: production
     permissions:
