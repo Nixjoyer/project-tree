@@ -40,46 +40,8 @@ jobs:
             echo "version_changed=false" >> "$GITHUB_OUTPUT"
           fi
 
-  publish-testpypi:
-    needs: detect-version
-    if: needs.detect-version.outputs.version_changed == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Set RC Version
-        env:
-          VERSION: ${{ needs.detect-version.outputs.version }}
-        run: |
-          ESCAPED=$(printf '%s' "$VERSION" | sed 's/\./\\./g')
-          sed -i "s/version = \"${ESCAPED}\"/version = \"${VERSION}rc1\"/" pyproject.toml
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Build
-        run: uv build
-
-      - name: Publish to TestPyPI
-        run: uv publish --index testpypi --trusted-publishing always
-
-      - name: Notify Slack
-        uses: slackapi/slack-github-action@v2
-        with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
-          payload: |
-            {
-              "text": "📦 *${{ needs.detect-version.outputs.package }} ${{ needs.detect-version.outputs.version }}rc1* published to TestPyPI. Approve the pending deployment to release to PyPI."
-            }
-
   publish-pypi:
-    needs: [detect-version, publish-testpypi]
+    needs: detect-version
     runs-on: ubuntu-latest
     environment: production
     permissions:
