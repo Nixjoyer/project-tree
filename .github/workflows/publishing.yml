@@ -4,11 +4,12 @@ permissions:
   contents: read
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - closed
     branches:
       - main
+      - master
     paths:
       - pyproject.toml
 
