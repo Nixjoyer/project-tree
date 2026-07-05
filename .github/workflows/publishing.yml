@@ -14,7 +14,26 @@ on:
       - pyproject.toml
 
 jobs:
-  detect-version:
+  test-pypl-connection:
+    name: Test PyPI Connection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Test PyPI Connection
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://pypi.org/)
+          if [ "$STATUS" != "200" ]; then
+            echo "PyPI connection failed with status $STATUS"
+            exit 1
+          fi
+
+  check-version:
+    needs: test-pypl-connection
+    if: ${{ needs.test-pypl-connection.outputs.status == '200' }}
     runs-on: ubuntu-latest
     outputs:
       version_changed: ${{ steps.check.outputs.version_changed }}
@@ -32,6 +51,7 @@ jobs:
         env:
           BASE_REF: ${{ github.base_ref }}
         run: |
+          STATUS=200
           BASE_VERSION=$(git show "origin/${BASE_REF}:pyproject.toml" | grep -m 1 '^version = ' | cut -d'"' -f2)
           HEAD_VERSION=$(grep -m 1 '^version = ' pyproject.toml | cut -d'"' -f2)
           PKG=$(grep -m 1 '^name = ' pyproject.toml | cut -d'"' -f2)
@@ -44,8 +64,8 @@ jobs:
           fi
 
   publish-pypi:
-    needs: detect-version
-    if: github.event.pull_request.merged == true && needs.detect-version.outputs.version_changed == 'true'
+    needs: check-version
+    if: github.event.pull_request.merged == true && needs.check-version.outputs.version_changed == 'true'
     runs-on: ubuntu-latest
     environment: production
     permissions:
@@ -59,8 +79,8 @@ jobs:
       - name: Check Version on PyPI
         id: check-pypi
         env:
-          VERSION: ${{ needs.detect-version.outputs.version }}
-          PKG: ${{ needs.detect-version.outputs.package }}
+          VERSION: ${{ needs.check-version.outputs.version }}
+          PKG: ${{ needs.check-version.outputs.package }}
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/${PKG}/${VERSION}/json")
           if [ "$STATUS" = "200" ]; then
