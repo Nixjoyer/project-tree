@@ -8,6 +8,10 @@ on:
     types:
       - labeled
       - unlabeled
+  issues:
+    types:
+      - labeled
+      - unlabeled
 
 jobs:
   label:
@@ -21,3 +25,5 @@ jobs:
       - uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-types: "labeled,unlabeled"
+          pr-labels: ${{ github.event.pull_request.labels.*.name }}
