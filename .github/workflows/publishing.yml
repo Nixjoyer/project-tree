@@ -31,24 +31,6 @@ jobs:
             exit 1
           fi
 
-  test-slack-webhook:
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Test Slack Webhook
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          if [ -z "$SLACK_WEBHOOK_URL" ]; then
-            echo "SLACK_WEBHOOK_URL is not set"
-            exit 1
-          fi
-          curl -s -o /dev/null -w "%{http_code}" "$SLACK_WEBHOOK_URL" | grep -q "200"
-          if [ $? -ne 0 ]; then
-            echo "Failed to send test message to Slack"
-            exit 1
-          fi
-
   check-version:
     needs: test-pypl-connection
     if: ${{ needs.test-pypl-connection.outputs.status == '200' }}
