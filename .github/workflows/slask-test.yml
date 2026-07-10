@@ -3,6 +3,8 @@
 name: Post an inline text message
 on:
   push_request:
+    branches:
+      - main
 
 jobs:
   run:
