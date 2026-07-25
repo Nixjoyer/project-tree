@@ -11,7 +11,7 @@ from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from .generator import generate_markdown_tree
-from .ignore import is_ignored, DEFAULT_IGNORES, load_ignore_file
+from .ignore import DEFAULT_IGNORES, is_ignored, load_ignore_file
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,10 @@ readme = "README.md"
 description = "Generate a deterministic Markdown representation of a project directory tree"
 keywords = ["project", "tree", "markdown", "directory", "cli"]
 requires-python = ">=3.10"
-dependencies = ["watchdog>=5.0.0"]
+dependencies = [
+    "ruff>=0.16.0",
+    "watchdog>=5.0.0",
+]
 
 authors = [
     {name = "Nuxview", email = "nuxview24@gmail.com"},
