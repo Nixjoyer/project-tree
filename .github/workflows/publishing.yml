@@ -33,7 +33,6 @@ jobs:
 
   check-version:
     needs: test-pypl-connection
-    if: ${{ needs.test-pypl-connection.outputs.status == '200' }}
     runs-on: ubuntu-latest
     outputs:
       version_changed: ${{ steps.check.outputs.version_changed }}
@@ -49,10 +48,9 @@ jobs:
       - name: Detect Version Change
         id: check
         env:
-          BASE_REF: ${{ github.base_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          STATUS=200
-          BASE_VERSION=$(git show "origin/${BASE_REF}:pyproject.toml" | grep -m 1 '^version = ' | cut -d'"' -f2)
+          BASE_VERSION=$(git show "${BASE_SHA}:pyproject.toml" | grep -m 1 '^version = ' | cut -d'"' -f2)
           HEAD_VERSION=$(grep -m 1 '^version = ' pyproject.toml | cut -d'"' -f2)
           PKG=$(grep -m 1 '^name = ' pyproject.toml | cut -d'"' -f2)
           echo "package=${PKG}" >> "$GITHUB_OUTPUT"
@@ -97,13 +95,13 @@ jobs:
           webhook-type: incoming-webhook
           payload: |
             {
-              "text": "❌ *${{ needs.detect-version.outputs.package }} ${{ needs.detect-version.outputs.version }}* already exists on PyPI. Publication aborted."
+              "text": "❌ *${{ needs.check-version.outputs.package }} ${{ needs.check-version.outputs.version }}* already exists on PyPI. Publication aborted."
             }
 
       - name: Fail - Version Already Exists
         if: steps.check-pypi.outputs.exists == 'true'
         run: |
-          echo "::error::Version ${{ needs.detect-version.outputs.version }} already exists on PyPI."
+          echo "::error::Version ${{ needs.check-version.outputs.version }} already exists on PyPI."
           exit 1
 
       - name: Setup uv
@@ -126,5 +124,5 @@ jobs:
           webhook-type: incoming-webhook
           payload: |
             {
-              "text": "✅ *${{ needs.detect-version.outputs.package }} ${{ needs.detect-version.outputs.version }}* successfully published to PyPI."
+              "text": "✅ *${{ needs.check-version.outputs.package }} ${{ needs.check-version.outputs.version }}* successfully published to PyPI."
             }
