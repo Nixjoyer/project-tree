@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """CLI test coverage for argument parsing and orchestration."""
 
 from pathlib import Path

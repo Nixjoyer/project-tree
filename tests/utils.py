@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Helpers for test setup and file creation."""
 
 from pathlib import Path

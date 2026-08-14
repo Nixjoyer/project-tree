@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Filesystem watch mode with debounced regeneration of the Markdown tree."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Project Tree package metadata."""
 
 from importlib.metadata import PackageNotFoundError, version

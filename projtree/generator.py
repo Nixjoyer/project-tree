@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Deterministic Markdown generation for directory trees."""
 
 from pathlib import Path

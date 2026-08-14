@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Pytest configuration for in-repo imports."""
 
 from __future__ import annotations
