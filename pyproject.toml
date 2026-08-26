@@ -34,7 +34,6 @@ projtree = "projtree.cli:main"
 dev = [
   "pytest>=9.1.0",
   "ruff>=0.16.0",
-  "uv>=0.11.0",
 ]
 
 [build-system]
