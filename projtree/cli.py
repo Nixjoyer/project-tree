@@ -100,7 +100,7 @@ def argparse_main(argv: list[str] | None = None) -> int:
     try:
         markdown = generate_markdown_tree(root_path, ignore=ignore)
         output_path.write_text(markdown, encoding="utf-8")
-    except Exception as exc:
+    except (OSError, UnicodeError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
 
