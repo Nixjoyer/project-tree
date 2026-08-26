@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
@@ -17,37 +16,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - name: Setup Python
-        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.13"
+          enable-cache: true
 
-      - name: Install Ruff
-        run: pip install ruff
+      - name: Run Ruff Linter
+        run: uv run ruff check .
 
-      - name: Run Linter
-        run: ruff check .
+      - name: Run Ruff Formatter Check
+        run: uv run ruff format --check .
 
   tests:
     needs: lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - name: Checkout Code
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - name: Setup Python
-        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
+      - name: Setup uv and Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.13"
-
-      - name: Install Dependencies
-        run: pip install ."[dev]"
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
 
       - name: Run Tests
-        run: python -m pytest -v
+        run: uv run pytest -v
