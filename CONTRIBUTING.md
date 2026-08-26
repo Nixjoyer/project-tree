@@ -150,7 +150,6 @@ When adding features, place code in the appropriate module.
 - **Language Version**: Python 3.10+ features are acceptable (e.g., type unions with `|`, match statements)
 - **Type Hints**: All functions must include type hints for parameters and return values
   - Prefer modern syntax: `set[str]`, `dict[str, int]`, `str | None` (3.10+)
-  - Note: `generator.py` uses older style (`Optional[Set[str]]`) for historical reasons, but new code should use modern style
 - **Docstrings**: Use docstrings for all public functions and classes:
 
   ```python
