@@ -82,9 +82,6 @@ jobs:
         run: |
           CHANGELOG="CHANGELOG.md"
 
-          # Ensure the docs directory and file exist
-          mkdir -p docs
-
           if [ ! -f "$CHANGELOG" ]; then
             {
               echo "# Changelog"
