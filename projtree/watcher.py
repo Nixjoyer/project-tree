@@ -51,7 +51,6 @@ class _DebouncedHandler(FileSystemEventHandler):
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
 
-
     def on_any_event(self, event) -> None:
         """Handle observer events and trigger regeneration when structure changed."""
         path = Path(event.src_path)

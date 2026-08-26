@@ -65,9 +65,4 @@ def generate_markdown_tree(
 
     body = "\n".join(lines) + "\n"
 
-    return (
-        HEADER
-        + CODE_BLOCK_OPEN
-        + body
-        + CODE_BLOCK_CLOSE
-    )
+    return HEADER + CODE_BLOCK_OPEN + body + CODE_BLOCK_CLOSE
