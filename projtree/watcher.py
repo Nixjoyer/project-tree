@@ -149,6 +149,6 @@ def watch_and_generate(
         except Exception:
             observer.stop()
             observer.join()
-            logger.exception("Watcher error, restarting after backoff: %s")
+            logger.exception("Watcher error, restarting after backoff.")
             time.sleep(1.0)  # restart backoff
             continue
