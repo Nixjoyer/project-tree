@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Tests for deterministic markdown tree generation."""
 
 from pathlib import Path

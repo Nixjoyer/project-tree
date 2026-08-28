@@ -1,17 +1,14 @@
+#!/usr/bin/env python3
+
 """Tests ensuring internal documentation coverage."""
 
 import inspect
 
 import projtree
-import projtree.cli as cli
-import projtree.generator as generator
-import projtree.ignore as ignore
-import projtree.watcher as watcher
 import tests.conftest as test_conftest
-import tests.test_basic_tree as test_basic_tree
-import tests.test_cli as test_cli
-import tests.test_watcher_basic as test_watcher_basic
 import tests.utils as test_utils
+from projtree import cli, generator, ignore, watcher
+from tests import test_basic_tree, test_cli, test_watcher_basic
 
 
 def test_core_modules_have_docstrings():

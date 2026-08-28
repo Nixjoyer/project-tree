@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Ignore loading and matching utilities shared by CLI and watcher flows."""
 
 from pathlib import Path

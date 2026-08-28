@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Tests for watcher-based regeneration."""
 
 import threading

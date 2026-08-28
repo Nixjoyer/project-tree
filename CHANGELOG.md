@@ -1,14 +1,7 @@
 # Changelog
 
 All notable changes merged to `main` or `master` are recorded here.
-Entries are prepended automatically after the header separator when a pull request
-meets the workflow's review requirements and is successfully merged to `main` or `master`.
-
-Current automation is based on review state:
-
-1. The pull request is approved by **Nuxview**.
-2. No reviewer has an outstanding `CHANGES_REQUESTED` review (a later approval from the same reviewer supersedes it).
-3. The pull request is successfully merged to `main` or `master`.
+Entries are prepended automatically after the header separator when a pull request is successfully merged to `main` or `master`.
 
 ---
 
@@ -26,20 +19,19 @@ Current automation is based on review state:
 
 ### Changed Files
 
-  - `projtree/__init__.py` (modified)
-  - `projtree/cli.py` (modified)
-  - `projtree/generator.py` (modified)
-  - `projtree/ignore.py` (modified)
-  - `projtree/watcher.py` (modified)
-  - `tests/conftest.py` (modified)
-  - `tests/test_basic_tree.py` (modified)
-  - `tests/test_cli.py` (modified)
-  - `tests/test_internal_docs.py` (added)
-  - `tests/test_watcher_basic.py` (modified)
-  - `tests/utils.py` (modified)
+- `projtree/__init__.py` (modified)
+- `projtree/cli.py` (modified)
+- `projtree/generator.py` (modified)
+- `projtree/ignore.py` (modified)
+- `projtree/watcher.py` (modified)
+- `tests/conftest.py` (modified)
+- `tests/test_basic_tree.py` (modified)
+- `tests/test_cli.py` (modified)
+- `tests/test_internal_docs.py` (added)
+- `tests/test_watcher_basic.py` (modified)
+- `tests/utils.py` (modified)
 
 ---
-
 
 ## 2026-05-23 20:40:59 UTC — PR #12: feat: add changelog GitHub Action and initial changelog.md
 
@@ -65,9 +57,7 @@ Current automation is based on review state:
 
 ### Changed Files
 
-  - `.github/workflows/changelog.yml` (added)
-  - `docs/changelog.md` (added)
+- `.github/workflows/changelog.yml` (added)
+- `docs/changelog.md` (added)
 
 ---
-
-

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Filesystem watch mode with debounced regeneration of the Markdown tree."""
 
 from __future__ import annotations
@@ -11,7 +13,7 @@ from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from .generator import generate_markdown_tree
-from .ignore import is_ignored, DEFAULT_IGNORES, load_ignore_file
+from .ignore import DEFAULT_IGNORES, is_ignored, load_ignore_file
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +50,6 @@ class _DebouncedHandler(FileSystemEventHandler):
 
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
-
 
     def on_any_event(self, event) -> None:
         """Handle observer events and trigger regeneration when structure changed."""
@@ -145,9 +146,9 @@ def watch_and_generate(
             observer.stop()
             observer.join()
             break
-        except Exception as exc:
+        except Exception:
             observer.stop()
             observer.join()
-            logger.exception("Watcher error, restarting after backoff: %s", exc)
+            logger.exception("Watcher error, restarting after backoff.")
             time.sleep(1.0)  # restart backoff
             continue

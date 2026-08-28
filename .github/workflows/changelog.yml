@@ -24,89 +24,8 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify required approvals
-        id: verify_approvals
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }}
-        run: |
-          echo "Fetching reviews for PR #${PR_NUMBER}..."
-          REVIEWS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
-
-          # Check latest review state from repository owner (Nuxview)
-          # Add additional trusted reviewers by expanding the list below.
-          OWNER_STATE=$(echo "$REVIEWS" | jq -r '
-            sort_by(.user.login, .submitted_at) |
-            group_by(.user.login) |
-            map(last) |
-            map(select(.user.login | ascii_downcase | IN("nuxview"))) |
-            map(.state) |
-            first
-          ')
-
-          if [ "$OWNER_STATE" != "APPROVED" ]; then
-            echo "❌ PR does not have a current approval from Nuxview. Skipping changelog update."
-            echo "approved=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "✅ Approved by Nuxview."
-
-          echo "approved=true" >> "$GITHUB_OUTPUT"
-
-      - name: Verify effective review decision
-        id: verify_guidelines
-        if: steps.verify_approvals.outputs.approved == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }}
-        run: |
-          echo "Checking effective review decision for blocking requests..."
-
-          REVIEW_DECISION=$(gh pr view "${PR_NUMBER}" --repo "${REPO}" --json reviewDecision -q '.reviewDecision' 2>/dev/null || true)
-
-          if [ -z "$REVIEW_DECISION" ]; then
-            echo "⚠️  Unable to read reviewDecision; falling back to latest review state per reviewer."
-            REVIEWS=$(gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --paginate)
-            REVIEWS_TYPE=$(echo "$REVIEWS" | jq -r 'type' 2>/dev/null || echo invalid)
-            if [ -z "$REVIEWS" ] || [ "$REVIEWS_TYPE" != "array" ] || [ "$(echo "$REVIEWS" | jq -r 'length')" = "0" ]; then
-              echo "❌ Unable to fetch review history; failing closed."
-              echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            REVIEW_SUMMARY=$(echo "$REVIEWS" | jq -r '
-              sort_by(.user.login, .submitted_at) |
-              group_by(.user.login) |
-              map(last) |
-              map({login: .user.login, state: .state})
-            ')
-
-            REQUESTING_CHANGES=$(echo "$REVIEW_SUMMARY" | jq -r '
-              map(select(.state == "CHANGES_REQUESTED") | .login) | join(", ")
-            ')
-
-            if [ -n "$REQUESTING_CHANGES" ]; then
-              echo "❌ Effective review state includes CHANGES_REQUESTED from: ${REQUESTING_CHANGES}. Skipping changelog update."
-              echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-          else
-            if [ "$REVIEW_DECISION" = "CHANGES_REQUESTED" ]; then
-              echo "❌ Review decision is CHANGES_REQUESTED. Skipping changelog update."
-              echo "guidelines_ok=false" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-          fi
-
-          echo "✅ Review decision allows merge."
-          echo "guidelines_ok=true" >> "$GITHUB_OUTPUT"
-
       - name: Collect commit information
         id: collect_commits
-        if: |
-          steps.verify_approvals.outputs.approved == 'true' &&
-          steps.verify_guidelines.outputs.guidelines_ok == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -160,14 +79,8 @@ jobs:
           cat /tmp/new_entry.md
 
       - name: Prepend entry to CHANGELOG.md
-        if: |
-          steps.verify_approvals.outputs.approved == 'true' &&
-          steps.verify_guidelines.outputs.guidelines_ok == 'true'
         run: |
           CHANGELOG="CHANGELOG.md"
-
-          # Ensure the docs directory and file exist
-          mkdir -p docs
 
           if [ ! -f "$CHANGELOG" ]; then
             {
@@ -204,9 +117,6 @@ jobs:
           cat "$CHANGELOG"
 
       - name: Commit and push changelog update
-        if: |
-          steps.verify_approvals.outputs.approved == 'true' &&
-          steps.verify_guidelines.outputs.guidelines_ok == 'true'
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}

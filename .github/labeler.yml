@@ -1,0 +1,25 @@
+# Configuration for actions/labeler v5
+
+core:
+  - changed-files:
+      - any-glob-to-any-file: "projtree/**"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file: "tests/**"
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "*.md"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "pyproject.toml"
+          - "uv.lock"
