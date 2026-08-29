@@ -97,7 +97,9 @@ jobs:
   publish-pypi:
     name: Publish to PyPI
     needs: [test-pypi-connection, check-version]
-    if: needs.check-version.outputs.version_changed == 'true'
+    if: >-
+      needs.check-version.outputs.version_changed == 'true' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     environment: production
     permissions:
