@@ -4,14 +4,13 @@ permissions:
   contents: read
 
 on:
-  pull_request_target:
-    types:
-      - closed
+  push:
     branches:
       - main
       - master
     paths:
       - pyproject.toml
+  workflow_dispatch:
 
 jobs:
   test-pypi-connection:
@@ -43,23 +42,29 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.merge_commit_sha || github.event.pull_request.base.ref }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: Detect Version Change
         id: check
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.before }}
+          IS_MANUAL: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           python3 -c '
           import os, re, subprocess, sys
 
           base_sha = os.environ.get("BASE_SHA", "")
           base_text = ""
-          if base_sha:
+          if base_sha and not base_sha.startswith("0000000"):
               try:
                   base_text = subprocess.check_output(["git", "show", f"{base_sha}:pyproject.toml"], text=True)
+              except Exception:
+                  pass
+
+          if not base_text:
+              try:
+                  base_text = subprocess.check_output(["git", "show", "HEAD~1:pyproject.toml"], text=True)
               except Exception:
                   base_text = ""
 
@@ -74,7 +79,11 @@ jobs:
           head_version = parse_field(head_text, "version")
           pkg_name = parse_field(head_text, "name")
 
-          version_changed = "true" if (base_version != head_version and head_version) else "false"
+          is_manual = os.environ.get("IS_MANUAL", "false").lower() == "true"
+          if is_manual:
+              version_changed = "true" if head_version else "false"
+          else:
+              version_changed = "true" if (base_version != head_version and head_version) else "false"
 
           output_file = os.environ.get("GITHUB_OUTPUT")
           if output_file:
@@ -88,7 +97,9 @@ jobs:
   publish-pypi:
     name: Publish to PyPI
     needs: [test-pypi-connection, check-version]
-    if: github.event.pull_request.merged == true && needs.check-version.outputs.version_changed == 'true'
+    if: >-
+      needs.check-version.outputs.version_changed == 'true' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     environment: production
     permissions:
@@ -98,7 +109,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
           persist-credentials: false
 
       - name: Check Version on PyPI
